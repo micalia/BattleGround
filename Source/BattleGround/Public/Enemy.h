@@ -31,4 +31,12 @@ public:
 	//사격 포인트 (라인트레이스 방식)
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* shootPos;
+
+	TArray<AActor*> EmptyActorsToIgnore;
+	TArray<FHitResult> OutHits;
+
+	UPROPERTY(EditAnywhere)
+	float checkEnemyCollRadius = 500;
+	/*UPROPERTY(EditAnywhere)
+	class USphereComponent* checkEnemyColl;*/
 };

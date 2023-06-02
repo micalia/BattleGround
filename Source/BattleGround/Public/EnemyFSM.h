@@ -39,6 +39,9 @@ public:
 	UPROPERTY()
 	class AAIController* ai;
 
+	bool bTrace;
+		FVector dir;
+
 	//Å¸°Ù
 	UPROPERTY(EditAnywhere)
 		class ABattleGroundCharacter* target;
