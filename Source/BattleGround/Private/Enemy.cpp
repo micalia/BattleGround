@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include <Engine/SkeletalMesh.h>
 #include <Components/SceneComponent.h>
+#include <Components/CapsuleComponent.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -17,6 +18,7 @@ AEnemy::AEnemy()
 	}
 
 	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
+	shootPos->SetupAttachment(GetCapsuleComponent());
 }
 
 // Called when the game starts or when spawned

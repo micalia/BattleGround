@@ -80,7 +80,21 @@ FRotator destRot;
 	float traceRange = 900;
 	bool IsTargetTrace();
 
+	UPROPERTY(EditAnywhere)
+	float attackCool =1;
+	UPROPERTY(VisibleAnywhere)
+	float currAtkTime=0;
+
 	//공격범위
+	FVector startPos;
+	FVector endPos;
+	FVector lineDir;
+	FVector NewEndPos;
+	FVector randPos;
+	UPROPERTY(EditAnywhere)
+	float extensionLength = 700;
 	UPROPERTY(EditAnywhere)
 	float attackRange = 800;
+	UPROPERTY(EditAnywhere)
+	float attackErrorRange = 20;
 };

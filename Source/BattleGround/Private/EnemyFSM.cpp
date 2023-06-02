@@ -140,24 +140,52 @@ void UEnemyFSM::UpdateRotate()
 
 void UEnemyFSM::UpdateAttack()
 {
+	currAtkTime += GetWorld()->GetDeltaSeconds();
+
+	if (currAtkTime > attackCool) {
+		startPos = me->shootPos->GetComponentLocation();
+		//End (카메라위치 + 카메라 앞방향 * 거리)
+		int32 ranVal = UKismetMathLibrary::RandomIntegerInRange(1,3);
+		switch (ranVal)
+		{
+		case 1:
+		{
+			randPos = target->GetMesh()->GetSocketLocation(TEXT("head")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+			
+			endPos = randPos;
+
+		}
+			break;
+		case 2: {
+			randPos = target->GetMesh()->GetSocketLocation(TEXT("spine_05")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+			endPos = randPos;
+
+		}
+			break;
+		case 3: {
+			randPos = target->GetMesh()->GetSocketLocation(TEXT("pelvis")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+			endPos = randPos;
+		}
+			break;
+		}
+		lineDir = (endPos - startPos).GetSafeNormal();
+		NewEndPos = endPos + lineDir * extensionLength;
+
+		DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
+		currAtkTime = 0;
+	}
+
 	FVector dir = target->GetActorLocation() - me->GetActorLocation();
 	float dist = dir.Length();
 
 	bool bTrace = IsTargetTrace();
 
 	me->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(me->GetActorLocation(), target->GetActorLocation()));
-	if (bTrace) {
-		if (dir.Length() < attackRange)
-		{
-			//상태를 Attack 으로 변경
-			ChangeState(EEnemyState::Attack);
-		}
-	}
-	else
-	{
+
+	if (!bTrace) {
 		ChangeState(EEnemyState::Idle);
-		
 	}
+		
 	UE_LOG(LogTemp, Warning, TEXT("Attack!"))
 }
 
