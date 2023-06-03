@@ -12,7 +12,7 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));99
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
 	if (tempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
@@ -74,7 +74,7 @@ void AEnemy::CheckCreatureCollision()
 	//로그 출력
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("msg: %s"), *OutHits[i].GetActor()->GetName()), true, FVector2D(1, 1));
+		/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("msg: %s"), *OutHits[i].GetActor()->GetName()), true, FVector2D(1, 1));*/
 		if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
 			fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
 			break;
