@@ -44,7 +44,7 @@ public:
 
 	//Å¸°Ù
 	UPROPERTY(EditAnywhere)
-		class ABattleGroundCharacter* target;
+		class ACharacter* target;
 
 	UPROPERTY(VisibleAnywhere)
 	float currTime = 0;

@@ -27,6 +27,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//모델링
+	/*UPROPERTY()
+	ABattleGroundCharacter* */
+
+	UPROPERTY(EditAnywhere)
+	class UEnemyFSM* fsm;
 
 	//사격 포인트 (라인트레이스 방식)
 	UPROPERTY(EditAnywhere)
@@ -37,6 +42,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float checkEnemyCollRadius = 500;
+	void CheckCreatureCollision();
 	/*UPROPERTY(EditAnywhere)
 	class USphereComponent* checkEnemyColl;*/
 };

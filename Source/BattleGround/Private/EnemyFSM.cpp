@@ -36,7 +36,6 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	dir = target->GetActorLocation() - me->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("dir: %f"), dir.Length())
 
 	switch (currState) {
 	case EEnemyState::Idle:
