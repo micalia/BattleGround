@@ -103,7 +103,7 @@ void UEnemyFSM::UpdateIdle()
 			ChangeState(EEnemyState::Attack);
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Idle!"))
+	//UE_LOG(LogTemp, Warning, TEXT("Idle!"))
 }
 
 void UEnemyFSM::UpdateMove()
@@ -125,7 +125,7 @@ void UEnemyFSM::UpdateMove()
 		EPathFollowingRequestResult::Type re = ai->MoveToActor(target);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Move!"))
+	//UE_LOG(LogTemp, Warning, TEXT("Move!"))
 }
 
 void UEnemyFSM::UpdateRotate()
@@ -138,7 +138,7 @@ void UEnemyFSM::UpdateRotate()
 		currTime = 0;
 	}
 	ai->StopMovement();
-	UE_LOG(LogTemp, Warning, TEXT("Rotate!"))
+	//UE_LOG(LogTemp, Warning, TEXT("Rotate!"))
 }
 
 void UEnemyFSM::UpdateAttack()
@@ -188,12 +188,12 @@ void UEnemyFSM::UpdateAttack()
 		ChangeState(EEnemyState::Idle);
 	}
 		
-	UE_LOG(LogTemp, Warning, TEXT("Attack!"))
+	//UE_LOG(LogTemp, Warning, TEXT("Attack!"))
 }
 
 void UEnemyFSM::UpdateDie()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Die!"))
+	//UE_LOG(LogTemp, Warning, TEXT("Die!"))
 }
 
 bool UEnemyFSM::IsWaitComplete(float delayTime)
