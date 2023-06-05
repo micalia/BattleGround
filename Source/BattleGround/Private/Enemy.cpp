@@ -22,6 +22,7 @@ AEnemy::AEnemy()
 
 	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
 	shootPos->SetupAttachment(GetCapsuleComponent());
+	shootPos->SetRelativeLocation(FVector(18, 0, 53));
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
