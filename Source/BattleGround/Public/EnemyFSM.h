@@ -39,9 +39,12 @@ public:
 	UPROPERTY()
 	class AAIController* ai;
 
+	bool bTrace;
+		FVector dir;
+
 	//Å¸°Ù
 	UPROPERTY(EditAnywhere)
-		class ABattleGroundCharacter* target;
+		class ACharacter* target;
 
 	UPROPERTY(VisibleAnywhere)
 	float currTime = 0;

@@ -35,8 +35,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("dir: %f"), dir.Length())
+	dir = target->GetActorLocation() - me->GetActorLocation();
 
 	switch (currState) {
 	case EEnemyState::Idle:
@@ -97,6 +96,13 @@ void UEnemyFSM::UpdateIdle()
 	if (IsWaitComplete(idleDelayTime)) {
 		ChangeState(EEnemyState::Move);
 	}
+
+	if (bTrace) {
+		if (dir.Length() < attackRange)
+		{
+			ChangeState(EEnemyState::Attack);
+		}
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Idle!"))
 }
 
@@ -106,19 +112,16 @@ void UEnemyFSM::UpdateMove()
 		ChangeState(EEnemyState::Rotate);
 	}
 
-	bool bTrace = IsTargetTrace();
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
+	bTrace = IsTargetTrace();
 
 	if (bTrace) {
 		if (dir.Length() < attackRange)
 		{
-			//상태를 Attack 으로 변경
 			ChangeState(EEnemyState::Attack);
 		}
 	}
 	else
 	{
-		//ai 를 이용해서 목적지까지 이동하고 싶다.	
 		EPathFollowingRequestResult::Type re = ai->MoveToActor(target);
 	}
 
@@ -175,10 +178,9 @@ void UEnemyFSM::UpdateAttack()
 		currAtkTime = 0;
 	}
 
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
 	float dist = dir.Length();
 
-	bool bTrace = IsTargetTrace();
+	bTrace = IsTargetTrace();
 
 	me->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(me->GetActorLocation(), target->GetActorLocation()));
 
@@ -209,19 +211,12 @@ bool UEnemyFSM::IsWaitComplete(float delayTime)
 
 bool UEnemyFSM::IsTargetTrace()
 {
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-
-	//2. 나의 앞방향과 1번에 구한 벡터의 내적
 	float dotValue = FVector::DotProduct(me->GetActorForwardVector(), dir.GetSafeNormal());
 
-	//3. 2번에 구한 값을 Acos --> 두 벡터의 사이각
 	float angle = UKismetMathLibrary::DegAcos(dotValue);
 
-	//4. 만약에 3번에서 구한 값이 30보다 작고(시야각 60)
-	//   나 - 타겟 과의 거리가 traceRange 보다 작으면
 	if (angle < 30 && dir.Length() < traceRange)
 	{
-		//Enemy -----> target LineTrace 쏘자!!
 		FHitResult hitInfo;
 		FCollisionQueryParams param;
 		param.AddIgnoredActor(me);
@@ -233,18 +228,18 @@ bool UEnemyFSM::IsTargetTrace()
 			ECC_Visibility,
 			param);
 
-		//만약에 부딪힌 곳이 있다면
 		if (bHit)
 		{
-			//만약에 부딪힌 놈의 이름이 Player 를 포함하고 있다면
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))
 			{
-				//5. true 반환
+				return true;
+			}
+
+			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
 				return true;
 			}
 		}
 	}
 
-	//6. 그렇지 않으면 false 반환	
 	return false;
 }
