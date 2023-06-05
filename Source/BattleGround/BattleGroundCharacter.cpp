@@ -9,7 +9,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include <Components/SkeletalMeshComponent.h>
+#include "Bullet.h"
+#include <Components/SceneComponent.h>
 
 //////////////////////////////////////////////////////////////////////////
 // ABattleGroundCharacter
@@ -32,7 +34,7 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
@@ -49,6 +51,29 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// 총 스켈레탈메시 컴포넌트 등록
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
+	
+	// 부모 컴포넌트를 Mesh 컴포넌트로 설정
+	gunMeshComp->SetupAttachment(GetMesh());
+
+	// 스켈레탈메시 데이터 로드
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+
+	// 데이터 로드가 성공했다면, 데이터가 존재한다면
+	if (TempGunMesh.Succeeded())
+	{
+		// 스켈레탈메시 데이터 할당
+		gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
+		// 위치는 블루프린트에서 조정한다. 
+		gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+	}
+
+	firePos = CreateDefaultSubobject<USceneComponent>(TEXT("FirePos"));
+	firePos->SetupAttachment(gunMeshComp);
+	firePos->SetRelativeLocation(FVector(0,65,15));
+	firePos->SetRelativeRotation(FRotator(0, 90 ,0));
 }
 
 void ABattleGroundCharacter::BeginPlay()
@@ -84,6 +109,8 @@ void ABattleGroundCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABattleGroundCharacter::Look);
 
+		//Fire
+		PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ABattleGroundCharacter::InputFire);
 	}
 
 }
@@ -125,5 +152,10 @@ void ABattleGroundCharacter::Look(const FInputActionValue& Value)
 }
 
 
-
+void ABattleGroundCharacter::InputFire()
+{
+	//FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("testPos"));
+	FTransform firePosition = firePos->GetComponentTransform();
+	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
+}
 
