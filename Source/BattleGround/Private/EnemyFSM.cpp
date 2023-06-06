@@ -59,13 +59,13 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UEnemyFSM::ChangeState(EEnemyState state)
 {
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"),
-			*enumPtr->GetNameStringByIndex((int32)currState),
-			*enumPtr->GetNameStringByIndex((int32)state));
-	}
+	//UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	//if (enumPtr != nullptr)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"),
+	//		*enumPtr->GetNameStringByIndex((int32)currState),
+	//		*enumPtr->GetNameStringByIndex((int32)state));
+	//}
 
 	currState = state;
 
