@@ -62,5 +62,21 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+	
+	// ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã
+	UPROPERTY(VisibleAnywhere, Category=GunMesh)
+	class USkeletalMeshComponent* gunMeshComp;
+
+	// ÃÑ¾Ë °øÀå
+	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
+	TSubclassOf<class ABullet> bulletFactory;
+
+	void InputFire();
+
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* firePos;
+
 };
 

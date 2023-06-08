@@ -2,12 +2,12 @@
 	"Targets": [
 		{
 			"Name": "BattleGround",
-			"Path": "D:\\ProgrammingWorks\\Unreal\\BattleGround\\Source\\BattleGround.Target.cs",
+			"Path": "D:\\unrealProject\\Temp\\BattleGround\\Source\\BattleGround.Target.cs",
 			"Type": "Game"
 		},
 		{
 			"Name": "BattleGroundEditor",
-			"Path": "D:\\ProgrammingWorks\\Unreal\\BattleGround\\Source\\BattleGroundEditor.Target.cs",
+			"Path": "D:\\unrealProject\\Temp\\BattleGround\\Source\\BattleGroundEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]
