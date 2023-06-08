@@ -22,9 +22,9 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+	//bUseControllerRotationPitch = false;
+	//bUseControllerRotationYaw = false;
+	//bUseControllerRotationRoll = false;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
@@ -146,7 +146,9 @@ void ABattleGroundCharacter::Look(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
+		// X축으로 마우스 이동시 X축에 해당하는 카메라의 이동을 보여준다.
 		AddControllerYawInput(LookAxisVector.X);
+		// Y축으로 마우스 이동 시 Y축에 해당하는 카메라의 이동을 보여준다. 
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }

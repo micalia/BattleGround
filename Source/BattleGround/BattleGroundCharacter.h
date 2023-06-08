@@ -78,5 +78,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* firePos;
+
 };
 
