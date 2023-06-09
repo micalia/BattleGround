@@ -60,7 +60,7 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 	gunMeshComp->SetupAttachment(GetMesh());
 
 	// 스켈레탈메시 데이터 로드
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.Material'/Game/FPWeapon/Materials/M_FPGun.M_FPGun'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 
 	// 데이터 로드가 성공했다면, 데이터가 존재한다면
 	if (TempGunMesh.Succeeded())
