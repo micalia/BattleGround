@@ -42,8 +42,10 @@ public:
 	bool bTrace;
 		FVector dir;
 
+		UPROPERTY()
+		class ACharacter* playerPointer;
 	//Å¸°Ù
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class ACharacter* target;
 
 	UPROPERTY(VisibleAnywhere)
@@ -78,6 +80,9 @@ FRotator destRot;
 
 	bool IsWaitComplete(float delayTime);
 
+	bool bAttack;
+
+
 	//ÂÑ¾Æ °¥ ¼ö ÀÖ´Â ¹üÀ§
 	UPROPERTY(EditAnywhere)
 	float traceRange = 900;
@@ -100,4 +105,6 @@ FRotator destRot;
 	float attackRange = 800;
 	UPROPERTY(EditAnywhere)
 	float attackErrorRange = 20;
+
+
 };

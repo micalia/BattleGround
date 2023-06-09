@@ -26,6 +26,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	
+	UPROPERTY(EditAnywhere, Category = Effect)
+	class UParticleSystem* damageEffect;
+
+	UPROPERTY(EditAnywhere)
+		int32 FullHp = 5;
+	int32 currHP = 0;
+
+	UPROPERTY(EditAnywhere)
+		int32 power = 1;
+
 	//¸ðµ¨¸µ
 	/*UPROPERTY()
 	ABattleGroundCharacter* */
@@ -37,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* shootPos;
 
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* enemyHPwidget;
+
 	TArray<AActor*> EmptyActorsToIgnore;
 	TArray<FHitResult> OutHits;
 
@@ -45,4 +59,19 @@ public:
 	void CheckCreatureCollision();
 	/*UPROPERTY(EditAnywhere)
 	class USphereComponent* checkEnemyColl;*/
+
+	int32 Damaged(int32 power);
+
+	void UpdateWidgetRotation();
+
+	FTimerHandle TimerHandle_UpdateWidgetRotation;
+	FVector GetPlayerCameraLocation();
+	FRotator GetPlayerCameraRotation();
+
+	UPROPERTY()
+	class UUI_EnemyHP* enemyHpUI;
+private:
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	FRotator WidgetRotation;
 };
