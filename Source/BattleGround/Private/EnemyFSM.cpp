@@ -44,13 +44,6 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		target = playerPointer;
 	}
 
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s : %s / target is (%s)"), *me->GetActorLabel(),
-			*enumPtr->GetNameStringByIndex((int32)currState), *target->GetActorLabel()),
-			 true, FVector2D(1, 1));
-	}
 	switch (currState) {
 	case EEnemyState::Idle:
 		UpdateIdle();
