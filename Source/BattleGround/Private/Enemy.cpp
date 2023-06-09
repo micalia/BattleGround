@@ -36,9 +36,6 @@ AEnemy::AEnemy()
 
 	enemyHPwidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHpWidget"));
 	enemyHPwidget->SetupAttachment(GetCapsuleComponent());
-	/*checkEnemyColl = CreateDefaultSubobject<USphereComponent>(TEXT("checkEnemyColl"));
-	checkEnemyColl->SetupAttachment(GetCapsuleComponent());
-	checkEnemyColl->SetSphereRadius(500);*/
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
 	if (tempDamageEffect.Succeeded()) {
@@ -95,10 +92,8 @@ void AEnemy::CheckCreatureCollision()
 		0.1
 	);
 
-	//로그 출력
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
-		/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("msg: %s"), *OutHits[i].GetActor()->GetName()), true, FVector2D(1, 1));*/
 			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
 				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
 				break;
@@ -114,7 +109,6 @@ int32 AEnemy::Damaged(int32 damage)
 	currHP -= damage;
 	if (currHP <= 0) {
 		Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("Enemy DIe!!"))
 	}
 	return currHP;
 }
@@ -132,19 +126,14 @@ void AEnemy::UpdateWidgetRotation()
 
 FVector AEnemy::GetPlayerCameraLocation()
 {
-	// 현재 플레이어 컨트롤러 가져오기
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
-	// 플레이어 컨트롤러가 유효한지 확인
 	if (PlayerController != nullptr)
 	{
-		// 메인 카메라 컴포넌트 가져오기
 		UCameraComponent* MainCamera = PlayerController->GetPawn()->FindComponentByClass<UCameraComponent>();
 
-		// 메인 카메라가 유효한지 확인
 		if (MainCamera != nullptr)
 		{
-			// 메인 카메라의 위치 반환
 			return MainCamera->GetComponentLocation();
 		}
 	}
@@ -154,19 +143,14 @@ FVector AEnemy::GetPlayerCameraLocation()
 
 FRotator AEnemy::GetPlayerCameraRotation()
 {
-	// 현재 플레이어 컨트롤러 가져오기
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
-	// 플레이어 컨트롤러가 유효한지 확인
 	if (PlayerController != nullptr)
 	{
-		// 메인 카메라 컴포넌트 가져오기
 		UCameraComponent* MainCamera = PlayerController->GetPawn()->FindComponentByClass<UCameraComponent>();
 
-		// 메인 카메라가 유효한지 확인
 		if (MainCamera != nullptr)
 		{
-			// 메인 카메라의 위치 반환
 			return MainCamera->GetComponentRotation();
 		}
 	}
