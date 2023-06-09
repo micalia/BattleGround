@@ -250,8 +250,6 @@ bool UEnemyFSM::IsTargetTrace()
 			ECC_Visibility,
 			param);
 
-		DrawDebugLine(GetWorld(), me->GetActorLocation(), target->GetActorLocation(), FColor::Green, false, 0.7, 0, 3);
-
 		if (bHit)
 		{
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))

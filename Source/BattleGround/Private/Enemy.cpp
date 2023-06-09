@@ -84,7 +84,7 @@ void AEnemy::CheckCreatureCollision()
 		UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel4),
 		true,
 		EmptyActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		OutHits,
 		true,
 		FLinearColor::Red,
