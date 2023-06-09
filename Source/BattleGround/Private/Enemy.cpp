@@ -4,7 +4,13 @@
 #include <Components/CapsuleComponent.h>
 #include <Components/SphereComponent.h>
 #include <Kismet/KismetSystemLibrary.h>
+#include "Components/WidgetComponent.h"
 #include "EnemyFSM.h"
+#include <Camera/CameraComponent.h>
+#include <Kismet/KismetMathLibrary.h>
+#include <GameFramework/PlayerController.h>
+#include "UI_EnemyHP.h"
+#include <Particles/ParticleSystem.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -27,15 +33,25 @@ AEnemy::AEnemy()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
 	fsm = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
-	/*checkEnemyColl = CreateDefaultSubobject<USphereComponent>(TEXT("checkEnemyColl"));
-	checkEnemyColl->SetupAttachment(GetCapsuleComponent());
-	checkEnemyColl->SetSphereRadius(500);*/
+
+	enemyHPwidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHpWidget"));
+	enemyHPwidget->SetupAttachment(GetCapsuleComponent());
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	if (tempDamageEffect.Succeeded()) {
+		damageEffect = tempDamageEffect.Object;
+	}
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	currHP = FullHp;
+
+	enemyHpUI = Cast<UUI_EnemyHP>(enemyHPwidget->GetWidget());
+	GetWorldTimerManager().SetTimer(TimerHandle_UpdateWidgetRotation, this, &AEnemy::UpdateWidgetRotation, 0.1f, true);
 }
 
 // Called every frame
@@ -43,6 +59,10 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	if (enemyHpUI !=nullptr) {
+		enemyHpUI->UpdateCurrHP(currHP, FullHp);
+	}
+
 	CheckCreatureCollision();
 }
 
@@ -72,17 +92,68 @@ void AEnemy::CheckCreatureCollision()
 		0.1
 	);
 
-	//로그 출력
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
-		/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("msg: %s"), *OutHits[i].GetActor()->GetName()), true, FVector2D(1, 1));*/
-		if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
-			fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
-			break;
-		}
-		else {
-			fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
-		}
+			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
+				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
+				break;
+			}
+			else {
+				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
+			}
 	}
 }
 
+int32 AEnemy::Damaged(int32 damage)
+{
+	currHP -= damage;
+	if (currHP <= 0) {
+		Destroy();
+	}
+	return currHP;
+}
+
+void AEnemy::UpdateWidgetRotation()
+{
+	CameraLocation = GetPlayerCameraLocation();
+	CameraRotation = GetPlayerCameraRotation();
+	if (enemyHPwidget)
+	{
+		WidgetRotation = UKismetMathLibrary::FindLookAtRotation(enemyHPwidget->GetComponentLocation(), CameraLocation);
+		enemyHPwidget->SetWorldRotation(WidgetRotation);
+	}
+}
+
+FVector AEnemy::GetPlayerCameraLocation()
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController != nullptr)
+	{
+		UCameraComponent* MainCamera = PlayerController->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (MainCamera != nullptr)
+		{
+			return MainCamera->GetComponentLocation();
+		}
+	}
+
+	return FVector::ZeroVector;
+}
+
+FRotator AEnemy::GetPlayerCameraRotation()
+{
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController != nullptr)
+	{
+		UCameraComponent* MainCamera = PlayerController->GetPawn()->FindComponentByClass<UCameraComponent>();
+
+		if (MainCamera != nullptr)
+		{
+			return MainCamera->GetComponentRotation();
+		}
+	}
+
+	return FRotator::ZeroRotator;
+}

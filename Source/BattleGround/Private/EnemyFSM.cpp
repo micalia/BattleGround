@@ -27,6 +27,7 @@ void UEnemyFSM::BeginPlay()
 
 	ai = Cast<AAIController>(me->GetController());
 	target = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
+	playerPointer = target;
 }
 
 
@@ -35,8 +36,21 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (target != nullptr) {
 	dir = target->GetActorLocation() - me->GetActorLocation();
+		
+	}
+	else {
+		target = playerPointer;
+	}
 
+	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	if (enumPtr != nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s : %s / target is (%s)"), *me->GetActorLabel(),
+			*enumPtr->GetNameStringByIndex((int32)currState), *target->GetActorLabel()),
+			 true, FVector2D(1, 1));
+	}
 	switch (currState) {
 	case EEnemyState::Idle:
 		UpdateIdle();
@@ -108,6 +122,7 @@ void UEnemyFSM::UpdateIdle()
 
 void UEnemyFSM::UpdateMove()
 {
+
 	if (IsWaitComplete(moveDelayTime)) {
 		ChangeState(EEnemyState::Rotate);
 	}
@@ -131,6 +146,7 @@ void UEnemyFSM::UpdateMove()
 void UEnemyFSM::UpdateRotate()
 {
 	currTime += GetWorld()->GetDeltaSeconds();
+
 	float alpha = currTime / rotatingTime;
 	me->SetActorRotation(FMath::Lerp(currRot, destRot, alpha));
 	if (alpha > 1) {
@@ -138,6 +154,18 @@ void UEnemyFSM::UpdateRotate()
 		currTime = 0;
 	}
 	ai->StopMovement();
+	bTrace = IsTargetTrace();
+
+	if (bTrace) {
+		if (dir.Length() < attackRange)
+		{
+			ChangeState(EEnemyState::Attack);
+		}
+	}
+	else
+	{
+		EPathFollowingRequestResult::Type re = ai->MoveToActor(target);
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Rotate!"))
 }
 
@@ -146,6 +174,7 @@ void UEnemyFSM::UpdateAttack()
 	currAtkTime += GetWorld()->GetDeltaSeconds();
 
 	if (currAtkTime > attackCool) {
+		bAttack = true;
 		startPos = me->shootPos->GetComponentLocation();
 		//End (카메라위치 + 카메라 앞방향 * 거리)
 		int32 ranVal = UKismetMathLibrary::RandomIntegerInRange(1,3);
@@ -228,17 +257,35 @@ bool UEnemyFSM::IsTargetTrace()
 			ECC_Visibility,
 			param);
 
+		DrawDebugLine(GetWorld(), me->GetActorLocation(), target->GetActorLocation(), FColor::Green, false, 0.7, 0, 3);
+
 		if (bHit)
 		{
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))
 			{
+				if (bAttack == true) {
+					UE_LOG(LogTemp, Warning, TEXT("Player Damaged!!!"))
+					bAttack = false;
+				}
 				return true;
 			}
 
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
+				if (bAttack == true) {
+					AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
+					int32 enemyHP = enemy->Damaged(me->power);
+					if (enemyHP <= 0) {
+						UE_LOG(LogTemp, Warning, TEXT("hp: %d"), enemyHP)
+							target = playerPointer;
+					}
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), me->damageEffect, hitInfo.ImpactPoint, me->GetActorRotation());
+					//
+					bAttack = false;
+				}
 				return true;
 			}
 		}
+
 	}
 
 	return false;
