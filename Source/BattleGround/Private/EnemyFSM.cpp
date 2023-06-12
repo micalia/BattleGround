@@ -255,7 +255,9 @@ bool UEnemyFSM::IsTargetTrace()
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))
 			{
 				if (bAttack == true) {
-					UE_LOG(LogTemp, Warning, TEXT("Player Damaged!!!"))
+					ABattleGroundCharacter* player = Cast<ABattleGroundCharacter>(hitInfo.GetActor());
+					player->currHp--;
+
 					bAttack = false;
 				}
 				return true;
@@ -266,7 +268,7 @@ bool UEnemyFSM::IsTargetTrace()
 					AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
 					int32 enemyHP = enemy->Damaged(me->power);
 					if (enemyHP <= 0) {
-						UE_LOG(LogTemp, Warning, TEXT("hp: %d"), enemyHP)
+						//UE_LOG(LogTemp, Warning, TEXT("hp: %d"), enemyHP)
 							target = playerPointer;
 					}
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), me->damageEffect, hitInfo.ImpactPoint, me->GetActorRotation());
