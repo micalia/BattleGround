@@ -1,8 +1,8 @@
 {
 	"SourceFiles": [
-		"D:\\ProgrammingWorks\\Unreal\\BattleGround\\Source\\BattleGround\\BattleGround.Build.cs",
-		"D:\\ProgrammingWorks\\Unreal\\BattleGround\\Source\\BattleGround.Target.cs",
-		"D:\\ProgrammingWorks\\Unreal\\BattleGround\\Source\\BattleGroundEditor.Target.cs"
+		"D:\\ProgrammingWorks\\Unreal\\NewBattleGround\\BattleGround\\Source\\BattleGround\\BattleGround.Build.cs",
+		"D:\\ProgrammingWorks\\Unreal\\NewBattleGround\\BattleGround\\Source\\BattleGround.Target.cs",
+		"D:\\ProgrammingWorks\\Unreal\\NewBattleGround\\BattleGround\\Source\\BattleGroundEditor.Target.cs"
 	],
 	"EngineVersion": "5.2.0"
 }
