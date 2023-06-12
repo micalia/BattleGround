@@ -85,6 +85,8 @@ void ABattleGroundCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	currHp = FullHp;
+
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{

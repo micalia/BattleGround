@@ -23,6 +23,21 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY()
+	class UParticleSystem* damageEffect;
+
+	UPROPERTY(EditAnywhere)
+	int32 power = 1;
+
+	UFUNCTION()
+	void OnOverlap(
+			UPrimitiveComponent* OverlappedComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex,
+			bool bFromSweep,
+			const FHitResult& SweepResult);
+
 public: 
 	// 발사체 형태의 물리 기능을 제공
 	UPROPERTY(VisibleAnywhere, Category=Movement)
