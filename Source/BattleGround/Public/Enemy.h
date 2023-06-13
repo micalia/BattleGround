@@ -70,6 +70,10 @@ public:
 
 	UPROPERTY()
 	class UUI_EnemyHP* enemyHpUI;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* gunMeshComp;
+
 private:
 	FVector CameraLocation;
 	FRotator CameraRotation;

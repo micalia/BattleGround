@@ -11,6 +11,7 @@
 #include <GameFramework/PlayerController.h>
 #include "UI_EnemyHP.h"
 #include <Particles/ParticleSystem.h>
+#include "EnemyAnim.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -18,7 +19,7 @@ AEnemy::AEnemy()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Modelings/Soldier/SM_Soldier.SM_Soldier'"));
 	if (tempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
@@ -37,9 +38,24 @@ AEnemy::AEnemy()
 	enemyHPwidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHpWidget"));
 	enemyHPwidget->SetupAttachment(GetCapsuleComponent());
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
 	if (tempDamageEffect.Succeeded()) {
 		damageEffect = tempDamageEffect.Object;
+	}
+
+	ConstructorHelpers::FClassFinder<UEnemyAnim> tempAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/Blueprints/ABP_Enemy.ABP_Enemy_C'"));
+	if (tempAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(tempAnim.Class);
+	}
+
+	gunMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gunMesh"));
+	gunMeshComp->SetupAttachment(GetMesh(), TEXT("GunPos"));
+	gunMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> tempGunMesh(TEXT("/Script/Engine.StaticMesh'/Game/Modelings/M416/M4A1.M4A1'"));
+	if (tempGunMesh.Succeeded()) {
+		gunMeshComp->SetStaticMesh(tempGunMesh.Object);
 	}
 }
 
@@ -94,6 +110,7 @@ void AEnemy::CheckCreatureCollision()
 
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
+		if (fsm->target == nullptr)return;
 			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
 				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
 				break;
@@ -108,7 +125,7 @@ int32 AEnemy::Damaged(int32 damage)
 {
 	currHP -= damage;
 	if (currHP <= 0) {
-		Destroy();
+		fsm->ChangeState(EEnemyState::Die);
 	}
 	return currHP;
 }

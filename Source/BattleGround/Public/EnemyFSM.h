@@ -25,6 +25,8 @@ public:
 	// Sets default values for this component's properties
 	UEnemyFSM();
 
+UPROPERTY(EditAnywhere)
+	class UAnimMontage* damageMontage;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -35,6 +37,9 @@ public:
 	
 	UPROPERTY()
 	class AEnemy* me;
+
+	UPROPERTY(EditAnywhere)
+	class UEnemyAnim* anim;
 
 	UPROPERTY()
 	class AAIController* ai;
@@ -106,5 +111,9 @@ FRotator destRot;
 	UPROPERTY(EditAnywhere)
 	float attackErrorRange = 20;
 
-
+//Á×À½
+	bool bDie;
+	UPROPERTY(EditAnywhere)
+	float DieDelayTime = 6;
+	float dieCurrTime = 0;
 };

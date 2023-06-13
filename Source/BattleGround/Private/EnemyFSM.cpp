@@ -7,6 +7,8 @@
 #include <AIModule/Classes/AIController.h>
 #include "../BattleGroundCharacter.h"
 #include <Kismet/GameplayStatics.h>
+#include <Components/CapsuleComponent.h>
+#include "EnemyAnim.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -15,6 +17,11 @@ UEnemyFSM::UEnemyFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	ConstructorHelpers::FObjectFinder<UAnimMontage> tempMontage(TEXT("/Script/Engine.AnimMontage'/Game/Animations/Enemy/Montage/AM_SoldierDie.AM_SoldierDie'"));
+	if (tempMontage.Succeeded())
+	{
+		damageMontage = tempMontage.Object;
+	}
 }
 
 
@@ -24,7 +31,7 @@ void UEnemyFSM::BeginPlay()
 	Super::BeginPlay();
 
 	me = Cast<AEnemy>(GetOwner());
-
+	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 	ai = Cast<AAIController>(me->GetController());
 	target = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
 	playerPointer = target;
@@ -35,6 +42,13 @@ void UEnemyFSM::BeginPlay()
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	UE_LOG(LogTemp, Warning, TEXT("asdfasdf"))
+	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	if (enumPtr != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"),
+			*enumPtr->GetNameStringByIndex((int32)currState));
+	}
 
 	if (target != nullptr) {
 	dir = target->GetActorLocation() - me->GetActorLocation();
@@ -75,6 +89,7 @@ void UEnemyFSM::ChangeState(EEnemyState state)
 	//}
 
 	currState = state;
+	anim->animState = state;
 
 	ai->StopMovement();
 
@@ -94,6 +109,9 @@ void UEnemyFSM::ChangeState(EEnemyState state)
 	case EEnemyState::Attack:
 		break;
 	case EEnemyState::Die:
+		bDie = true;
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		me->PlayAnimMontage(damageMontage, 1.0f, FName(TEXT("Die")));
 		break;
 	}
 }
@@ -215,6 +233,12 @@ void UEnemyFSM::UpdateAttack()
 
 void UEnemyFSM::UpdateDie()
 {
+	if (bDie) {
+		dieCurrTime += GetWorld()->GetDeltaSeconds();
+		if (dieCurrTime > DieDelayTime) {
+			me->Destroy();
+		}
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Die!"))
 }
 
