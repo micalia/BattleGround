@@ -3,3 +3,6 @@
 
 #include "EnemyAnim.h"
 
+void UEnemyAnim::AnimNotify_Shot(){
+	UE_LOG(LogTemp, Warning, TEXT("shot"))
+}

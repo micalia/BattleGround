@@ -42,13 +42,6 @@ void UEnemyFSM::BeginPlay()
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	UE_LOG(LogTemp, Warning, TEXT("asdfasdf"))
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"),
-			*enumPtr->GetNameStringByIndex((int32)currState));
-	}
 
 	if (target != nullptr) {
 	dir = target->GetActorLocation() - me->GetActorLocation();

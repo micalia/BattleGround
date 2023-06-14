@@ -18,5 +18,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=FSM)
 	EEnemyState animState;
 
-
+UFUNCTION()
+	void AnimNotify_Shot();
 };
