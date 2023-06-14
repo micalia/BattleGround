@@ -207,7 +207,7 @@ void UEnemyFSM::UpdateAttack()
 		lineDir = (endPos - startPos).GetSafeNormal();
 		NewEndPos = endPos + lineDir * extensionLength;
 
-		DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
+		//DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
 		currAtkTime = 0;
 	}
 
@@ -271,17 +271,18 @@ bool UEnemyFSM::IsTargetTrace()
 		{
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))
 			{
-				if (bAttack == true) {
+				if (anim->bShotTiming ==true && bAttack == true) {
 					ABattleGroundCharacter* player = Cast<ABattleGroundCharacter>(hitInfo.GetActor());
 					player->currHp--;
 
+					anim->bShotTiming = false;
 					bAttack = false;
 				}
 				return true;
 			}
 
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
-				if (bAttack == true) {
+				if (anim->bShotTiming == true && bAttack == true) {
 					AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
 					int32 enemyHP = enemy->Damaged(me->power);
 					if (enemyHP <= 0) {
@@ -290,6 +291,7 @@ bool UEnemyFSM::IsTargetTrace()
 					}
 					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), me->damageEffect, hitInfo.ImpactPoint, me->GetActorRotation());
 					//
+					anim->bShotTiming = false;
 					bAttack = false;
 				}
 				return true;

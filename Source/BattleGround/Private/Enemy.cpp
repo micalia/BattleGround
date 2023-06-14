@@ -12,6 +12,7 @@
 #include "UI_EnemyHP.h"
 #include <Particles/ParticleSystem.h>
 #include "EnemyAnim.h"
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -26,10 +27,6 @@ AEnemy::AEnemy()
 		GetMesh()->SetRelativeLocation(FVector(0,0,-85));
 		GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
 	}
-
-	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
-	shootPos->SetupAttachment(GetCapsuleComponent());
-	shootPos->SetRelativeLocation(FVector(18, 0, 53));
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
@@ -57,6 +54,20 @@ AEnemy::AEnemy()
 	if (tempGunMesh.Succeeded()) {
 		gunMeshComp->SetStaticMesh(tempGunMesh.Object);
 	}
+
+	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
+	shootPos->SetupAttachment(gunMeshComp);
+	shootPos->SetRelativeLocation(FVector(60.534064, 0.293241, 27.286787));
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> tempShotPosEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Particle/InProject/P_shotPoint_BG.P_shotPoint_BG'"));
+	if (tempShotPosEffect.Succeeded()) {
+		shotPosEffect = tempShotPosEffect.Object;
+	}
+
+	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("particleComp"));
+	particleComp->SetupAttachment(gunMeshComp);
+	particleComp->SetRelativeLocation(FVector(62.654387, 0.160988, 24.570430));
+	particleComp->SetRelativeRotation(FRotator(-90,0,0));
 }
 
 // Called when the game starts or when spawned
@@ -110,7 +121,7 @@ void AEnemy::CheckCreatureCollision()
 
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
-		if (fsm->target == nullptr)return;
+		if (fsm == nullptr)return;
 			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
 				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
 				break;

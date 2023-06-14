@@ -87,7 +87,6 @@ FRotator destRot;
 
 	bool bAttack;
 
-
 	//쫓아 갈 수 있는 범위
 	UPROPERTY(EditAnywhere)
 	float traceRange = 900;

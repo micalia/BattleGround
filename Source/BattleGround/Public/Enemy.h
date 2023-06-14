@@ -74,6 +74,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* gunMeshComp;
 
+	UPROPERTY(EditAnywhere, Category = Effect)
+	class UParticleSystem* shotPosEffect;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* particleComp;
+
 private:
 	FVector CameraLocation;
 	FRotator CameraRotation;
