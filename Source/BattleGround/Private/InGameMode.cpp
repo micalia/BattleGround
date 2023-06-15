@@ -2,11 +2,14 @@
 
 
 #include "InGameMode.h"
-#include <UMG/Public/Blueprint/UserWidget.h>
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
+#include "WinPanel.h"
+#include <UMG/Public/Components/CanvasPanel.h>
 
 AInGameMode::AInGameMode() {
+	PrimaryActorTick.bCanEverTick = true;
+
     static ConstructorHelpers::FClassFinder<UUserWidget> tempWinWidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/WB_WinWidget.WB_WinWidget_C'"));
     if (tempWinWidgetClass.Succeeded())
     {
@@ -25,7 +28,7 @@ void AInGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	if (winWidgetClass) {
-		winWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), winWidgetClass);
+		winWidgetInstance = CreateWidget<UWinPanel>(GetWorld(), winWidgetClass);
 		if (winWidgetInstance) {
 			winWidgetInstance->AddToViewport();
 		}
@@ -50,5 +53,21 @@ void AInGameMode::BeginPlay()
 	}
 
 	enemyCount = ActiveEnemies.Num();
+	UE_LOG(LogTemp, Warning, TEXT("enemyCount: %d"), enemyCount)
+}
 
+void AInGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bWin) {
+		winCurrTime += DeltaTime;
+
+		float opacity = winCurrTime / winFadeInTime;
+		if (opacity <= 1) {
+			winWidgetInstance->winPanel->SetRenderOpacity(opacity);
+		}
+		/*winWidgetInstance->
+		FMath::Lerp(prevCamPos, powerAttackCamMove->GetRelativeLocation(), GetWorld()->GetDeltaSeconds() * SkillCamSpeed);*/
+	}
 }

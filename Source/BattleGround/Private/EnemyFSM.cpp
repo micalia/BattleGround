@@ -46,15 +46,6 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		if (target != NULL) {
-	UE_LOG(LogTemp, Warning, TEXT("My name : %s / My target is %s / CurrState : %s"), *GetOwner()->GetActorLabel(), *target->GetActorLabel(), *enumPtr->GetNameStringByIndex((int32)currState))
-
-		}
-	}
-
 	if (target != nullptr) {
 		dir = target->GetActorLocation() - me->GetActorLocation();
 
@@ -269,13 +260,6 @@ void UEnemyFSM::UpdateDie()
 	if (bDie) {
 		dieCurrTime += GetWorld()->GetDeltaSeconds();
 		if (dieCurrTime > DieDelayTime) {
-			AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
-			if (gameMode != NULL) {
-				gameMode->enemyCount--;
-				if (gameMode->enemyCount <= 0) { 
-					gameMode->loseWidgetInstance->SetVisibility(ESlateVisibility::Visible);
-				}
-			}
 			me->Destroy();
 		}
 	}

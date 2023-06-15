@@ -17,6 +17,7 @@ class BATTLEGROUND_API AInGameMode : public AGameModeBase
 public:
 	AInGameMode();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> winWidgetClass;
@@ -24,10 +25,15 @@ public:
 		TSubclassOf<class UUserWidget> loseWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-		class UUserWidget* winWidgetInstance;
+		class UWinPanel* winWidgetInstance;
 	UPROPERTY(EditAnywhere)
 	class UUserWidget* loseWidgetInstance;
 
 	int32 enemyCount = 0;
 	TArray<class AEnemy*> ActiveEnemies;
+
+	bool bWin;
+	UPROPERTY(EditAnywhere)
+	float winCurrTime;
+	float winFadeInTime = 0.8;
 };
