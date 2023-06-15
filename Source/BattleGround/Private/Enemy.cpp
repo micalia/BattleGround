@@ -12,6 +12,8 @@
 #include "UI_EnemyHP.h"
 #include <Particles/ParticleSystem.h>
 #include "EnemyAnim.h"
+#include <Particles/ParticleSystemComponent.h>
+#include <Sound/SoundCue.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -25,11 +27,8 @@ AEnemy::AEnemy()
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
 		GetMesh()->SetRelativeLocation(FVector(0,0,-85));
 		GetMesh()->SetRelativeRotation(FRotator(0,-90,0));
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-
-	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
-	shootPos->SetupAttachment(GetCapsuleComponent());
-	shootPos->SetRelativeLocation(FVector(18, 0, 53));
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
@@ -37,8 +36,10 @@ AEnemy::AEnemy()
 
 	enemyHPwidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("EnemyHpWidget"));
 	enemyHPwidget->SetupAttachment(GetCapsuleComponent());
+	enemyHPwidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	enemyHPwidget->SetCollisionProfileName(TEXT("NoCollision"));
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> tempDamageEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Particle/InProject/P_Blood_BG.P_Blood_BG'"));
 	if (tempDamageEffect.Succeeded()) {
 		damageEffect = tempDamageEffect.Object;
 	}
@@ -56,6 +57,34 @@ AEnemy::AEnemy()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> tempGunMesh(TEXT("/Script/Engine.StaticMesh'/Game/Modelings/M416/M4A1.M4A1'"));
 	if (tempGunMesh.Succeeded()) {
 		gunMeshComp->SetStaticMesh(tempGunMesh.Object);
+	}
+
+	gunMeshComp->SetRelativeLocation(FVector(-16.816826, -27.965630, 1.319249));
+	gunMeshComp->SetRelativeRotation(FRotator(-4.699833, -106.534025, 101.128250));
+	gunMeshComp->SetRelativeScale3D(FVector(0.881841, 0.811883, 0.862825));
+
+	shootPos = CreateDefaultSubobject<USceneComponent>(TEXT("shootPos"));
+	shootPos->SetupAttachment(gunMeshComp);
+	shootPos->SetRelativeLocation(FVector(60.534064, 0.293241, 27.286787));
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> tempShotPosEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Particle/InProject/P_shotPoint_BG.P_shotPoint_BG'"));
+	if (tempShotPosEffect.Succeeded()) {
+		shotPosEffect = tempShotPosEffect.Object;
+	}
+
+	particleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("particleComp"));
+	particleComp->SetupAttachment(gunMeshComp);
+	particleComp->SetRelativeLocation(FVector(62.654387, 0.160988, 24.570430));
+	particleComp->SetRelativeRotation(FRotator(-90,0,0));
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempShotSound(TEXT("/Script/Engine.SoundWave'/Game/Sounds/m416-Single-shot-sound.m416-Single-shot-sound'"));
+	if (tempShotSound.Succeeded()) {
+		shotSound = tempShotSound.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<USoundCue> tempShotSoundCue(TEXT("/Script/Engine.SoundCue'/Game/Sounds/Kar98_Cue.Kar98_Cue'"));
+	if (tempShotSoundCue.Succeeded()) {
+		shotSoundCue = tempShotSoundCue.Object;
 	}
 }
 
@@ -110,7 +139,7 @@ void AEnemy::CheckCreatureCollision()
 
 	for (int32 i=0; i<OutHits.Num();i++)
 	{
-		if (fsm->target == nullptr)return;
+		if (fsm == nullptr)return;
 			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
 				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
 				break;
@@ -123,6 +152,7 @@ void AEnemy::CheckCreatureCollision()
 
 int32 AEnemy::Damaged(int32 damage)
 {
+	if (fsm->bDie)return 0;
 	currHP -= damage;
 	if (currHP <= 0) {
 		fsm->ChangeState(EEnemyState::Die);

@@ -15,8 +15,20 @@ class BATTLEGROUND_API UEnemyAnim : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
+	virtual void NativeBeginPlay() override;
+
+	UPROPERTY()
+	AEnemy* me;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=FSM)
 	EEnemyState animState;
 
+	bool bShotTiming;
 
+	//FHitResult hitInfoShot;
+	//FCollisionQueryParams paramShot;
+//	bool LineTraceAttack();
+
+UFUNCTION()
+	void AnimNotify_Shot();
 };

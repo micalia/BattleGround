@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -42,17 +43,10 @@ void UEnemyFSM::BeginPlay()
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	UE_LOG(LogTemp, Warning, TEXT("asdfasdf"))
-	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (enumPtr != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"),
-			*enumPtr->GetNameStringByIndex((int32)currState));
-	}
 
 	if (target != nullptr) {
-	dir = target->GetActorLocation() - me->GetActorLocation();
-		
+		dir = target->GetActorLocation() - me->GetActorLocation();
+
 	}
 	else {
 		target = playerPointer;
@@ -100,12 +94,12 @@ void UEnemyFSM::ChangeState(EEnemyState state)
 	case EEnemyState::Move:
 		break;
 	case EEnemyState::Rotate: {
-		float ranYaw = UKismetMathLibrary::RandomFloatInRange(-180,180);
-		destRot = FRotator(0, ranYaw,0);
+		float ranYaw = UKismetMathLibrary::RandomFloatInRange(-180, 180);
+		destRot = FRotator(0, ranYaw, 0);
 		currRot = me->GetActorRotation();
 		rotatingTime = UKismetMathLibrary::RandomFloatInRange(rotMinTime, rotMaxTime);
-		}
-		break;
+	}
+							break;
 	case EEnemyState::Attack:
 		break;
 	case EEnemyState::Die:
@@ -185,36 +179,65 @@ void UEnemyFSM::UpdateAttack()
 	currAtkTime += GetWorld()->GetDeltaSeconds();
 
 	if (currAtkTime > attackCool) {
+		AEnemy* checkEnemy = Cast<AEnemy>(target);
+
 		bAttack = true;
 		startPos = me->shootPos->GetComponentLocation();
 		//End (카메라위치 + 카메라 앞방향 * 거리)
-		int32 ranVal = UKismetMathLibrary::RandomIntegerInRange(1,3);
-		switch (ranVal)
-		{
-		case 1:
-		{
-			randPos = target->GetMesh()->GetSocketLocation(TEXT("head")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
-			
-			endPos = randPos;
+		int32 ranVal = UKismetMathLibrary::RandomIntegerInRange(1, 3);
+		if (!checkEnemy) {
+			switch (ranVal)
+			{
+			case 1:
+			{
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("head")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
 
-		}
-			break;
-		case 2: {
-			randPos = target->GetMesh()->GetSocketLocation(TEXT("spine_05")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
-			endPos = randPos;
+				endPos = randPos;
 
-		}
+			}
 			break;
-		case 3: {
-			randPos = target->GetMesh()->GetSocketLocation(TEXT("pelvis")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
-			endPos = randPos;
+			case 2: {
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("spine_05")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+				endPos = randPos;
+
+			}
+				  break;
+			case 3: {
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("pelvis")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+				endPos = randPos;
+			}
+				  break;
+			}
 		}
+		else {
+			switch (ranVal)
+			{
+			case 1:
+			{
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("head")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+
+				endPos = randPos;
+
+			}
 			break;
+			case 2: {
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("Spine2")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+				endPos = randPos;
+
+			}
+				  break;
+			case 3: {
+				randPos = target->GetMesh()->GetSocketLocation(TEXT("Hips")) + target->GetActorRightVector() * UKismetMathLibrary::RandomFloatInRange(-attackErrorRange, attackErrorRange);
+				endPos = randPos;
+			}
+				  break;
+			}
 		}
+
 		lineDir = (endPos - startPos).GetSafeNormal();
 		NewEndPos = endPos + lineDir * extensionLength;
 
-		DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
+		//DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
 		currAtkTime = 0;
 	}
 
@@ -227,7 +250,7 @@ void UEnemyFSM::UpdateAttack()
 	if (!bTrace) {
 		ChangeState(EEnemyState::Idle);
 	}
-		
+
 	//UE_LOG(LogTemp, Warning, TEXT("Attack!"))
 }
 
@@ -241,6 +264,8 @@ void UEnemyFSM::UpdateDie()
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("Die!"))
 }
+
+
 
 bool UEnemyFSM::IsWaitComplete(float delayTime)
 {
@@ -267,7 +292,7 @@ bool UEnemyFSM::IsTargetTrace()
 		FCollisionQueryParams param;
 		param.AddIgnoredActor(me);
 
-		bool bHit = GetWorld()->LineTraceSingleByChannel(
+		bHit = GetWorld()->LineTraceSingleByChannel(
 			hitInfo,
 			me->GetActorLocation(),
 			target->GetActorLocation(),
@@ -278,29 +303,14 @@ bool UEnemyFSM::IsTargetTrace()
 		{
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Person")))
 			{
-				if (bAttack == true) {
-					ABattleGroundCharacter* player = Cast<ABattleGroundCharacter>(hitInfo.GetActor());
-					player->currHp--;
-
-					bAttack = false;
-				}
 				return true;
 			}
 
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
-				if (bAttack == true) {
-					AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
-					int32 enemyHP = enemy->Damaged(me->power);
-					if (enemyHP <= 0) {
-						//UE_LOG(LogTemp, Warning, TEXT("hp: %d"), enemyHP)
-							target = playerPointer;
-					}
-					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), me->damageEffect, hitInfo.ImpactPoint, me->GetActorRotation());
-					//
-					bAttack = false;
-				}
 				return true;
 			}
+
+
 		}
 
 	}
