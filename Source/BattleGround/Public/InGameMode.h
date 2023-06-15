@@ -15,7 +15,7 @@ class BATTLEGROUND_API AInGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	AInGameMode();
+	//AInGameMode();
 	virtual void BeginPlay() override;
 
 	class UUserWidget* winWidget;

@@ -3,10 +3,7 @@
 
 #include "InGameMode.h"
 
-AInGameMode::AInGameMode()
-{
-	ConstructorHelpers::FClassFinder 
-}
+
 
 void AInGameMode::BeginPlay()
 {
