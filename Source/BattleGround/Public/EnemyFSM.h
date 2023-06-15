@@ -83,11 +83,17 @@ FRotator destRot;
 	void UpdateAttack();
 	void UpdateDie();
 
+
+	/*FHitResult hitInfoShot;
+	FCollisionQueryParams paramShot;
+	bool LineTraceAttack();*/
+
 	bool IsWaitComplete(float delayTime);
 
 	bool bAttack;
 
 	//쫓아 갈 수 있는 범위
+	bool bHit;
 	UPROPERTY(EditAnywhere)
 	float traceRange = 900;
 	bool IsTargetTrace();

@@ -25,7 +25,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	
 	UPROPERTY(EditAnywhere, Category = Effect)
 	class UParticleSystem* damageEffect;
@@ -79,6 +78,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UParticleSystemComponent* particleComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundBase* shotSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	class USoundCue* shotSoundCue;
 
 private:
 	FVector CameraLocation;

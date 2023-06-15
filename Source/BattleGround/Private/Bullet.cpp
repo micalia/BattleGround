@@ -75,7 +75,7 @@ void ABullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherA
 {
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 	enemy->Damaged(power);
-
+	
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), damageEffect, OverlappedComponent->GetComponentLocation(), GetActorRotation());
 	Destroy();
 	//SweepResult.ImpactPoint
