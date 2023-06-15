@@ -10,6 +10,8 @@
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
 #include <Particles/ParticleSystemComponent.h>
+#include "InGameMode.h"
+#include <UMG/Public/Blueprint/UserWidget.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -43,6 +45,15 @@ void UEnemyFSM::BeginPlay()
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	if (enumPtr != nullptr)
+	{
+		if (target != NULL) {
+	UE_LOG(LogTemp, Warning, TEXT("My name : %s / My target is %s / CurrState : %s"), *GetOwner()->GetActorLabel(), *target->GetActorLabel(), *enumPtr->GetNameStringByIndex((int32)currState))
+
+		}
+	}
 
 	if (target != nullptr) {
 		dir = target->GetActorLocation() - me->GetActorLocation();
@@ -237,7 +248,6 @@ void UEnemyFSM::UpdateAttack()
 		lineDir = (endPos - startPos).GetSafeNormal();
 		NewEndPos = endPos + lineDir * extensionLength;
 
-		//DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
 		currAtkTime = 0;
 	}
 
@@ -259,6 +269,13 @@ void UEnemyFSM::UpdateDie()
 	if (bDie) {
 		dieCurrTime += GetWorld()->GetDeltaSeconds();
 		if (dieCurrTime > DieDelayTime) {
+			AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+			if (gameMode != NULL) {
+				gameMode->enemyCount--;
+				if (gameMode->enemyCount <= 0) { 
+					gameMode->loseWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
 			me->Destroy();
 		}
 	}
@@ -309,8 +326,6 @@ bool UEnemyFSM::IsTargetTrace()
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
 				return true;
 			}
-
-
 		}
 
 	}
