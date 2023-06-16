@@ -27,13 +27,37 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UWinPanel* winWidgetInstance;
 	UPROPERTY(EditAnywhere)
-	class UUserWidget* loseWidgetInstance;
+	class ULosePanel* loseWidgetInstance;
 
 	int32 enemyCount = 0;
 	TArray<class AEnemy*> ActiveEnemies;
 
 	bool bWin;
+
 	UPROPERTY(EditAnywhere)
 	float winCurrTime;
 	float winFadeInTime = 0.8;
+
+	bool bLose;
+	UPROPERTY(EditAnywhere)
+	float loseCurrTime;
+	float loseFadeInTime = 0.8;
+
+	UPROPERTY()
+	class ABattleGroundCharacter* Player;
+
+	/*UPROPERTY(EditAnywhere)
+	FTransform setLoseCameraTranform;*/
+	UPROPERTY(EditAnywhere)
+	FVector SetLocation = FVector(0,0, 400);
+	UPROPERTY(EditAnywhere)
+	FRotator SetRotation  = FRotator(-90,0,0);
+
+	FTransform moveLoseCameraTransform;
+	FTransform originLoseCameraTransform;
+
+	APlayerCameraManager* cameraManager;
+	float loseCameraMoveCurrTime;
+	UPROPERTY(EditAnywhere)
+	float loseCameraMoveTime = 3;
 };

@@ -6,6 +6,10 @@
 #include "Enemy.h"
 #include "WinPanel.h"
 #include <UMG/Public/Components/CanvasPanel.h>
+#include "LosePanel.h"
+#include "../BattleGroundCharacter.h"
+#include <Camera/CameraComponent.h>
+
 
 AInGameMode::AInGameMode() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -35,7 +39,7 @@ void AInGameMode::BeginPlay()
 	}
 
 	if (loseWidgetClass) {
-		loseWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), loseWidgetClass);
+		loseWidgetInstance = CreateWidget<ULosePanel>(GetWorld(), loseWidgetClass);
 		if (loseWidgetInstance) {
 			loseWidgetInstance->AddToViewport();
 		}
@@ -54,6 +58,9 @@ void AInGameMode::BeginPlay()
 
 	enemyCount = ActiveEnemies.Num();
 	UE_LOG(LogTemp, Warning, TEXT("enemyCount: %d"), enemyCount)
+
+
+	Player = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
 }
 
 void AInGameMode::Tick(float DeltaTime)
@@ -67,7 +74,24 @@ void AInGameMode::Tick(float DeltaTime)
 		if (opacity <= 1) {
 			winWidgetInstance->winPanel->SetRenderOpacity(opacity);
 		}
-		/*winWidgetInstance->
-		FMath::Lerp(prevCamPos, powerAttackCamMove->GetRelativeLocation(), GetWorld()->GetDeltaSeconds() * SkillCamSpeed);*/
 	}
+	if (bLose) {
+		loseCurrTime += DeltaTime;
+		loseCameraMoveCurrTime += DeltaTime;
+
+		float opacity = loseCurrTime / loseFadeInTime;
+		if (opacity <= 1) {
+			loseWidgetInstance->losePanel->SetRenderOpacity(opacity);
+		}
+
+		float alpha = loseCameraMoveCurrTime / loseCameraMoveTime;
+		if (Player) {
+			if (alpha <= 1) { 
+				Player->GetFollowCamera()->SetWorldLocation(FMath::Lerp(originLoseCameraTransform.GetLocation(), moveLoseCameraTransform.GetLocation(), alpha));
+				Player->GetFollowCamera()->SetWorldRotation(FMath::Lerp(originLoseCameraTransform.GetRotation(), moveLoseCameraTransform.GetRotation(), alpha));
+			}
+		}
+
+	}
+
 }
