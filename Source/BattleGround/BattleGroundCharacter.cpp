@@ -12,6 +12,8 @@
 #include <Components/SkeletalMeshComponent.h>
 #include "Bullet.h"
 #include <Components/SceneComponent.h>
+#include <Components/StaticMeshComponent.h>
+#include <Engine/StaticMesh.h>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,26 +58,26 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 	// 총 스켈레탈메시 컴포넌트 등록
 	//gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMeshComp"));
 
-	//// 부모 컴포넌트를 Mesh 컴포넌트로 설정
-	//gunMeshComp->SetupAttachment(GetMesh());
+	////// 부모 컴포넌트를 Mesh 컴포넌트로 설정
+	//gunMeshComp->SetupAttachment(GetMesh(), TEXT("gun_fire_button"));
 
-	//// 스켈레탈메시 데이터 로드
-	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+	////// 스켈레탈메시 데이터 로드
+	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4.SK_AR4'"));
 
-	//// 데이터 로드가 성공했다면, 데이터가 존재한다면
+	////// 데이터 로드가 성공했다면, 데이터가 존재한다면
 	//if (TempGunMesh.Succeeded())
 	//{
+	//	UE_LOG(LogTemp,Warning,TEXT("Succeeded2"));
 	//	// 스켈레탈메시 데이터 할당
 	//	gunMeshComp->SetSkeletalMesh(TempGunMesh.Object);
 	//	// 위치는 블루프린트에서 조정한다. 
-	//	gunMeshComp->SetRelativeLocation(FVector(-14, 52, 120));
+	//	gunMeshComp->SetRelativeLocationAndRotation(FVector(-8.286, 4.083, 0.322), FRotator(-0.633	, -13.0365 , 178.53));
 	//}
 
 	//firePos = CreateDefaultSubobject<USceneComponent>(TEXT("FirePos"));
 	//firePos->SetupAttachment(gunMeshComp);
 	//firePos->SetRelativeLocation(FVector(0, 65, 15));
 	//firePos->SetRelativeRotation(FRotator(0, 90, 0));
-
 
 
 }
@@ -161,8 +163,7 @@ void ABattleGroundCharacter::InputFire()
 {
 	//FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("testPos"));
 	/*FTransform firePosition = firePos->GetComponentTransform();
-	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
-	UE_LOG(LogTemp, Warning, TEXT("Fire"));*/
+	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);*/
 }
 
 
