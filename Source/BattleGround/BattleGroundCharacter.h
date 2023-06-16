@@ -71,17 +71,17 @@ public:
 public:
 	
 	// ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã
-	UPROPERTY(VisibleAnywhere, Category=GunMesh)
-	class USkeletalMeshComponent* gunMeshComp;
+	//UPROPERTY(BlueprintReadWrite, Category="gunMesh")
+	//class USkeletalMeshComponent* gunMeshComp;
 
-	// ÃÑ¾Ë °øÀå
-	UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
-	TSubclassOf<class ABullet> bulletFactory;
-
+	//// ÃÑ¾Ë °øÀå
+	//UPROPERTY(EditDefaultsOnly, Category = BulletFactory)
+	//TSubclassOf<class ABullet> bulletFactory;
+	
 	void InputFire();
 
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* firePos;
+	//UPROPERTY(EditAnywhere)
+	//class USceneComponent* firePos;
 
 };
 
