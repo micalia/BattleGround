@@ -15,8 +15,25 @@ class BATTLEGROUND_API AInGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	//AInGameMode();
+	AInGameMode();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
-	class UUserWidget* winWidget;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> winWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UUserWidget> loseWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+		class UWinPanel* winWidgetInstance;
+	UPROPERTY(EditAnywhere)
+	class UUserWidget* loseWidgetInstance;
+
+	int32 enemyCount = 0;
+	TArray<class AEnemy*> ActiveEnemies;
+
+	bool bWin;
+	UPROPERTY(EditAnywhere)
+	float winCurrTime;
+	float winFadeInTime = 0.8;
 };

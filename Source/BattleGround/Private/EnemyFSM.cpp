@@ -10,6 +10,8 @@
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
 #include <Particles/ParticleSystemComponent.h>
+#include "InGameMode.h"
+#include <UMG/Public/Blueprint/UserWidget.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -237,7 +239,6 @@ void UEnemyFSM::UpdateAttack()
 		lineDir = (endPos - startPos).GetSafeNormal();
 		NewEndPos = endPos + lineDir * extensionLength;
 
-		//DrawDebugLine(GetWorld(), startPos, NewEndPos, FColor::Blue, false, 0.7, 0, 3);
 		currAtkTime = 0;
 	}
 
@@ -309,8 +310,6 @@ bool UEnemyFSM::IsTargetTrace()
 			if (hitInfo.GetActor()->GetName().Contains(TEXT("Enemy"))) {
 				return true;
 			}
-
-
 		}
 
 	}

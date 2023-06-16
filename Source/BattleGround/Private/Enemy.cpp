@@ -14,6 +14,8 @@
 #include "EnemyAnim.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <Sound/SoundCue.h>
+#include "InGameMode.h"
+#include "WinPanel.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -155,6 +157,15 @@ int32 AEnemy::Damaged(int32 damage)
 	if (fsm->bDie)return 0;
 	currHP -= damage;
 	if (currHP <= 0) {
+		AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+		if (gameMode != NULL) {
+			gameMode->enemyCount--;
+			UE_LOG(LogTemp, Warning, TEXT("gameMode->enemyCount:%d"), gameMode->enemyCount)
+				if (gameMode->enemyCount <= 0) { 
+					gameMode->bWin = true;
+					gameMode->winWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+				}
+		}
 		fsm->ChangeState(EEnemyState::Die);
 	}
 	return currHP;

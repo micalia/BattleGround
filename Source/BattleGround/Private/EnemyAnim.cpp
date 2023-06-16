@@ -34,8 +34,6 @@ void UEnemyAnim::AnimNotify_Shot(){
 		ECC_Visibility,
 		paramShot);
 
-//	DrawDebugLine(GetWorld(), me->fsm->startPos, me->fsm->NewEndPos, FColor::Blue, false, 0.7, 0, 3);
-
 		if (bDamage) {
 			ABattleGroundCharacter* player = Cast<ABattleGroundCharacter>(hitInfoShot.GetActor());
 			if (player) {
