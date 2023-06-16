@@ -49,9 +49,9 @@ public:
 	/*UPROPERTY(EditAnywhere)
 	FTransform setLoseCameraTranform;*/
 	UPROPERTY(EditAnywhere)
-	FVector SetLocation = FVector(0,0, 400);
+	FVector SetLocation = FVector(-80,0, 370);
 	UPROPERTY(EditAnywhere)
-	FRotator SetRotation  = FRotator(-90,0,0);
+	FRotator SetRotation  = FRotator(-70,0,0);
 
 	FTransform moveLoseCameraTransform;
 	FTransform originLoseCameraTransform;
@@ -60,4 +60,6 @@ public:
 	float loseCameraMoveCurrTime;
 	UPROPERTY(EditAnywhere)
 	float loseCameraMoveTime = 3;
+
+	bool bEndGame;
 };

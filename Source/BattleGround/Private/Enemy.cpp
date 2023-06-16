@@ -16,6 +16,7 @@
 #include <Sound/SoundCue.h>
 #include "InGameMode.h"
 #include "WinPanel.h"
+#include <UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -110,7 +111,7 @@ void AEnemy::Tick(float DeltaTime)
 		enemyHpUI->UpdateCurrHP(currHP, FullHp);
 	}
 
-	CheckCreatureCollision();
+	//CheckCreatureCollision();
 }
 
 // Called to bind functionality to input
@@ -122,34 +123,40 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::CheckCreatureCollision()
 {
-	EmptyActorsToIgnore.Add(this);
-	bool bResult = UKismetSystemLibrary::SphereTraceMulti(
-		GetWorld(),
-		GetActorLocation(),
-		GetActorLocation(),
-		checkEnemyCollRadius,
-		UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel4),
-		true,
-		EmptyActorsToIgnore,
-		EDrawDebugTrace::None,
-		OutHits,
-		true,
-		FLinearColor::Red,
-		FLinearColor::Green,
-		0.1
-	);
+	//if (fsm->target) {
+		EmptyActorsToIgnore.Add(this);
+		bool bResult = UKismetSystemLibrary::SphereTraceMulti(
+			GetWorld(),
+			GetActorLocation(),
+			GetActorLocation(),
+			checkEnemyCollRadius,
+			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel4),
+			true,
+			EmptyActorsToIgnore,
+			EDrawDebugTrace::None,
+			OutHits,
+			true,
+			FLinearColor::Red,
+			FLinearColor::Green,
+			0.1
+		);
 
-	for (int32 i=0; i<OutHits.Num();i++)
-	{
-		if (fsm == nullptr)return;
-			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
-				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
-				break;
-			}
-			else {
-				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
-			}
-	}
+		for (int32 i=0; i<OutHits.Num();i++)
+		{
+			if (fsm == nullptr)return;
+				if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
+					fsm->target = fsm->playerPointer;
+					break;
+				}
+				else if(OutHits[i].GetActor()->GetName().Contains(TEXT("Enemy"))){
+					fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
+				}
+				else {
+					fsm->target = fsm->playerPointer;
+				}
+		}
+
+	//}
 }
 
 int32 AEnemy::Damaged(int32 damage)
@@ -162,8 +169,19 @@ int32 AEnemy::Damaged(int32 damage)
 			gameMode->enemyCount--;
 			UE_LOG(LogTemp, Warning, TEXT("gameMode->enemyCount:%d"), gameMode->enemyCount)
 				if (gameMode->enemyCount <= 0) { 
+					TArray<UUserWidget*> FoundWidgets;
+					UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
+					for (int32 i = 0; i < FoundWidgets.Num(); i++)
+					{
+						if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+							FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+						}
+
+					}
+
 					gameMode->bWin = true;
 					gameMode->winWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
 				}
 		}
 		fsm->ChangeState(EEnemyState::Die);

@@ -11,6 +11,7 @@
 #include "InGameMode.h"
 #include <Camera/CameraComponent.h>
 #include <GameFramework/PlayerController.h>
+#include <UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 
 void UEnemyAnim::NativeBeginPlay()
 {
@@ -49,17 +50,22 @@ void UEnemyAnim::AnimNotify_Shot(){
 				player->currHp--;
 				if (player->currHp <= 0) {
 					AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
-					if (gameMode != NULL) { 
+					if (gameMode != NULL && gameMode->bLose == false) {
+						gameMode->bEndGame = true;
+
+						TArray<UUserWidget*> FoundWidgets;
+						UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
+						for (int32 i = 0; i<FoundWidgets.Num(); i++)
+						{
+							if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+								FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+							}
+
+						}
+
 						APlayerController* controller = GetWorld()->GetFirstPlayerController();
 						player->DisableInput(controller);
-						gameMode->originLoseCameraTransform = player->GetFollowCamera()->GetComponentTransform();
-						
-						//FVector 자료형 예제
-						//FVector testVector = FVector(3, 3, 3) - FVector(1, 1, 1);
-						/*=
-						FTransform testTransform = FTransform(FQuat(1), FVector(1), FVector(1));
-						FTransform test2Transform = player->GetFollowCamera()->GetComponentTransform();
-						FTransform testTT = test2Transform - testTransform;*/
+						gameMode->originLoseCameraTransform = player->GetFollowCamera()->GetRelativeTransform();
 
 						//FTransform 자료형 빼기 식 성공
 						gameMode->moveLoseCameraTransform = FTransform(
@@ -69,6 +75,7 @@ void UEnemyAnim::AnimNotify_Shot(){
 						);
 						UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *gameMode->originLoseCameraTransform.ToString(),*gameMode->moveLoseCameraTransform.ToString())
 						gameMode->bLose = true;
+						me->fsm->ChangeState(EEnemyState::Idle);
 					}
 				}
 
@@ -100,8 +107,3 @@ void UEnemyAnim::AnimNotify_Shot(){
 		}
 
 }
-
-//bool UEnemyFSM::LineTraceAttack()
-//{
-//	
-//}

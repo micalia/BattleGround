@@ -25,10 +25,6 @@ public:
 
 	bool bShotTiming;
 
-	//FHitResult hitInfoShot;
-	//FCollisionQueryParams paramShot;
-//	bool LineTraceAttack();
-
 UFUNCTION()
 	void AnimNotify_Shot();
 };

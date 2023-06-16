@@ -38,6 +38,7 @@ void UEnemyFSM::BeginPlay()
 	ai = Cast<AAIController>(me->GetController());
 	target = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
 	playerPointer = target;
+	gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 
@@ -46,12 +47,16 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (target != nullptr) {
-		dir = target->GetActorLocation() - me->GetActorLocation();
-
+	if (gameMode->bEndGame == true) {
+		ChangeState(EEnemyState::Idle);
+		return;
 	}
-	else {
-		target = playerPointer;
+	me->CheckCreatureCollision();
+	if (target == nullptr)return;
+	if (me->OutHits.Num()>0) {
+		if (target) {
+			dir = target->GetActorLocation() - me->GetActorLocation();
+		}
 	}
 
 	switch (currState) {
@@ -76,13 +81,13 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UEnemyFSM::ChangeState(EEnemyState state)
 {
-	//UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	//if (enumPtr != nullptr)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"),
-	//		*enumPtr->GetNameStringByIndex((int32)currState),
-	//		*enumPtr->GetNameStringByIndex((int32)state));
-	//}
+	/*UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	if (enumPtr != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s -----> %s"),
+			*enumPtr->GetNameStringByIndex((int32)currState),
+			*enumPtr->GetNameStringByIndex((int32)state));
+	}*/
 
 	currState = state;
 	anim->animState = state;
@@ -114,6 +119,7 @@ void UEnemyFSM::ChangeState(EEnemyState state)
 
 void UEnemyFSM::UpdateIdle()
 {
+	ai->StopMovement();
 	if (IsWaitComplete(idleDelayTime)) {
 		ChangeState(EEnemyState::Move);
 	}
@@ -178,6 +184,7 @@ void UEnemyFSM::UpdateRotate()
 
 void UEnemyFSM::UpdateAttack()
 {
+	ai->StopMovement();
 	currAtkTime += GetWorld()->GetDeltaSeconds();
 
 	if (currAtkTime > attackCool) {

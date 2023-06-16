@@ -61,6 +61,7 @@ void AInGameMode::BeginPlay()
 
 
 	Player = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
+
 }
 
 void AInGameMode::Tick(float DeltaTime)
@@ -84,11 +85,11 @@ void AInGameMode::Tick(float DeltaTime)
 			loseWidgetInstance->losePanel->SetRenderOpacity(opacity);
 		}
 
-		float alpha = loseCameraMoveCurrTime / loseCameraMoveTime;
 		if (Player) {
-			if (alpha <= 1) { 
-				Player->GetFollowCamera()->SetWorldLocation(FMath::Lerp(originLoseCameraTransform.GetLocation(), moveLoseCameraTransform.GetLocation(), alpha));
-				Player->GetFollowCamera()->SetWorldRotation(FMath::Lerp(originLoseCameraTransform.GetRotation(), moveLoseCameraTransform.GetRotation(), alpha));
+			if (loseCameraMoveCurrTime < loseCameraMoveTime) {
+			float alpha = loseCameraMoveCurrTime / loseCameraMoveTime;
+				Player->GetFollowCamera()->SetRelativeLocation(FMath::Lerp(originLoseCameraTransform.GetLocation(), moveLoseCameraTransform.GetLocation(), alpha));
+				Player->GetFollowCamera()->SetRelativeRotation(FMath::Lerp(originLoseCameraTransform.GetRotation(), moveLoseCameraTransform.GetRotation(), alpha));
 			}
 		}
 

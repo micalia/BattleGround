@@ -121,4 +121,7 @@ FRotator destRot;
 	UPROPERTY(EditAnywhere)
 	float DieDelayTime = 6;
 	float dieCurrTime = 0;
+
+	UPROPERTY()
+	class AInGameMode* gameMode;
 };
