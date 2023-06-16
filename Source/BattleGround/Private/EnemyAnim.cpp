@@ -8,6 +8,9 @@
 #include <Particles/ParticleSystemComponent.h>
 #include "../BattleGroundCharacter.h"
 #include <Sound/SoundCue.h>
+#include "InGameMode.h"
+#include <Camera/CameraComponent.h>
+#include <GameFramework/PlayerController.h>
 
 void UEnemyAnim::NativeBeginPlay()
 {
@@ -44,6 +47,30 @@ void UEnemyAnim::AnimNotify_Shot(){
 				auto bloodEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), me->damageEffect, hitInfoShot.ImpactPoint);
 				bloodEffect->SetWorldRotation(NewRotation);
 				player->currHp--;
+				if (player->currHp <= 0) {
+					AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+					if (gameMode != NULL) { 
+						APlayerController* controller = GetWorld()->GetFirstPlayerController();
+						player->DisableInput(controller);
+						gameMode->originLoseCameraTransform = player->GetFollowCamera()->GetComponentTransform();
+						
+						//FVector 자료형 예제
+						//FVector testVector = FVector(3, 3, 3) - FVector(1, 1, 1);
+						/*=
+						FTransform testTransform = FTransform(FQuat(1), FVector(1), FVector(1));
+						FTransform test2Transform = player->GetFollowCamera()->GetComponentTransform();
+						FTransform testTT = test2Transform - testTransform;*/
+
+						//FTransform 자료형 빼기 식 성공
+						gameMode->moveLoseCameraTransform = FTransform(
+							gameMode->SetRotation,
+							gameMode->originLoseCameraTransform.GetLocation() + gameMode->SetLocation,
+							FVector(1)
+						);
+						UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *gameMode->originLoseCameraTransform.ToString(),*gameMode->moveLoseCameraTransform.ToString())
+						gameMode->bLose = true;
+					}
+				}
 
 				me->fsm->bAttack = false;
 
