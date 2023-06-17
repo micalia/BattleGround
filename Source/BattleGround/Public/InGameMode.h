@@ -23,11 +23,15 @@ public:
 		TSubclassOf<class UUserWidget> winWidgetClass;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<class UUserWidget> loseWidgetClass;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<class UInGameTopUI> InGameTopUIClass;
 
 	UPROPERTY(EditAnywhere)
 		class UWinPanel* winWidgetInstance;
 	UPROPERTY(EditAnywhere)
-	class ULosePanel* loseWidgetInstance;
+		class ULosePanel* loseWidgetInstance;
+	UPROPERTY(EditAnywhere)
+		class UInGameTopUI* InGameTopUiWidgetInstance;
 
 	int32 enemyCount = 0;
 	TArray<class AEnemy*> ActiveEnemies;
@@ -62,4 +66,6 @@ public:
 	float loseCameraMoveTime = 3;
 
 	bool bEndGame;
+
+	int32 InGamePlayerCount;
 };

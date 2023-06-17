@@ -9,6 +9,7 @@
 #include "LosePanel.h"
 #include "../BattleGroundCharacter.h"
 #include <Camera/CameraComponent.h>
+#include "InGameTopUI.h"
 
 
 AInGameMode::AInGameMode() {
@@ -24,6 +25,12 @@ AInGameMode::AInGameMode() {
 	if (tempLoseWidgetClass.Succeeded())
 	{
 		loseWidgetClass = tempLoseWidgetClass.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UInGameTopUI> tempInGameTopUIClassWidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UMG/WB_InGameTopUI.WB_InGameTopUI_C'"));
+	if (tempInGameTopUIClassWidgetClass.Succeeded())
+	{
+		InGameTopUIClass = tempInGameTopUIClassWidgetClass.Class;
 	}
 }
 
@@ -45,6 +52,13 @@ void AInGameMode::BeginPlay()
 		}
 	}
 
+	if (InGameTopUIClass) {
+		InGameTopUiWidgetInstance = CreateWidget<UInGameTopUI>(GetWorld(), InGameTopUIClass);
+		if (InGameTopUiWidgetInstance) {
+			InGameTopUiWidgetInstance->AddToViewport();
+		}
+	}
+
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), FoundActors);
 
@@ -57,8 +71,7 @@ void AInGameMode::BeginPlay()
 	}
 
 	enemyCount = ActiveEnemies.Num();
-	UE_LOG(LogTemp, Warning, TEXT("enemyCount: %d"), enemyCount)
-
+	InGamePlayerCount = enemyCount + 1;
 
 	Player = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
 
@@ -95,4 +108,7 @@ void AInGameMode::Tick(float DeltaTime)
 
 	}
 
+	if (InGameTopUiWidgetInstance) {
+		InGameTopUiWidgetInstance->UpdatePlayerCountTxt(InGamePlayerCount);
+	}
 }
