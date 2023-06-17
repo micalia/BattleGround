@@ -29,8 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Effect)
 	class UParticleSystem* damageEffect;
 
-	UPROPERTY(EditAnywhere)
-		int32 FullHp = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 FullHp = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 currHP = 0;
 
 	UPROPERTY(EditAnywhere)
