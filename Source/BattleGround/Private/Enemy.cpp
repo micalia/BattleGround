@@ -167,6 +167,7 @@ int32 AEnemy::Damaged(int32 damage)
 		AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
 		if (gameMode != NULL) {
 			gameMode->enemyCount--;
+			gameMode->InGamePlayerCount--;
 			UE_LOG(LogTemp, Warning, TEXT("gameMode->enemyCount:%d"), gameMode->enemyCount)
 				if (gameMode->enemyCount <= 0) { 
 					TArray<UUserWidget*> FoundWidgets;
@@ -174,6 +175,9 @@ int32 AEnemy::Damaged(int32 damage)
 					for (int32 i = 0; i < FoundWidgets.Num(); i++)
 					{
 						if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+							FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+						}
+						if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
 							FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
 						}
 
