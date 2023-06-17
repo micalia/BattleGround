@@ -150,6 +150,7 @@ void AEnemy::CheckCreatureCollision()
 				}
 				else if(OutHits[i].GetActor()->GetName().Contains(TEXT("Enemy"))){
 					fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
+					break;
 				}
 				else {
 					fsm->target = fsm->playerPointer;
