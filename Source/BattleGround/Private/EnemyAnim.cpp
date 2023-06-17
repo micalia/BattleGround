@@ -60,6 +60,9 @@ void UEnemyAnim::AnimNotify_Shot(){
 							if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
 								FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
 							}
+							if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
+								FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+							}
 
 						}
 
