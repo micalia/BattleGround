@@ -11,6 +11,7 @@
 #include <Camera/CameraComponent.h>
 #include "InGameTopUI.h"
 #include <UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
+#include <NavigationSystem/Public/NavigationSystem.h>
 
 
 AInGameMode::AInGameMode() {
@@ -75,7 +76,6 @@ void AInGameMode::BeginPlay()
 	InGamePlayerCount = enemyCount + 1;
 
 	Player = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
-
 }
 
 void AInGameMode::Tick(float DeltaTime)
@@ -116,6 +116,8 @@ void AInGameMode::Tick(float DeltaTime)
 
 void AInGameMode::PlayerDie()
 {
+	GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+
 	bEndGame = true;
 
 	TArray<UUserWidget*> FoundWidgets;
@@ -127,6 +129,9 @@ void AInGameMode::PlayerDie()
 		}
 		if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
 			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (FoundWidgets[i]->GetName().Contains(TEXT("Lose"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Visible);
 		}
 
 	}
@@ -141,8 +146,6 @@ void AInGameMode::PlayerDie()
 		originLoseCameraTransform.GetLocation() + SetLocation,
 		FVector(1)
 	);
-	UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *originLoseCameraTransform.ToString(), *moveLoseCameraTransform.ToString())
 		bLose = true;
-	UE_LOG(LogTemp, Warning, TEXT("PlayerDie!!"))
 	gameoverDel.Broadcast();
 }

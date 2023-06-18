@@ -130,31 +130,28 @@ void AEnemy::CheckCreatureCollision()
 			GetActorLocation(),
 			GetActorLocation(),
 			checkEnemyCollRadius,
-			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel4),
+			UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_GameTraceChannel5),
 			true,
 			EmptyActorsToIgnore,
 			EDrawDebugTrace::None,
 			OutHits,
-			true,
-			FLinearColor::Red,
-			FLinearColor::Green,
-			0.1
+			true
 		);
 
-		for (int32 i=0; i<OutHits.Num();i++)
+		for (int32 i = 0; i < OutHits.Num(); i++)
 		{
 			if (fsm == nullptr)return;
-				if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
-					fsm->target = fsm->playerPointer;
-					break;
-				}
-				else if(OutHits[i].GetActor()->GetName().Contains(TEXT("Enemy"))){
-					fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
-					break;
-				}
-				else {
-					fsm->target = fsm->playerPointer;
-				}
+			if (OutHits[i].GetActor()->GetName().Contains(TEXT("Person"))) {
+				fsm->target = fsm->playerPointer;
+				break;
+			}
+			else if (OutHits[i].GetActor()->GetName().Contains(TEXT("Enemy"))) {
+				fsm->target = Cast<ACharacter>(OutHits[i].GetActor());
+				break;
+			}
+			else {
+				fsm->target = fsm->playerPointer;
+			}
 		}
 
 	//}
@@ -169,7 +166,6 @@ int32 AEnemy::Damaged(int32 damage)
 		if (gameMode != NULL) {
 			gameMode->enemyCount--;
 			gameMode->InGamePlayerCount--;
-			UE_LOG(LogTemp, Warning, TEXT("gameMode->enemyCount:%d"), gameMode->enemyCount)
 				if (gameMode->enemyCount <= 0) { 
 					TArray<UUserWidget*> FoundWidgets;
 					UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
@@ -183,6 +179,8 @@ int32 AEnemy::Damaged(int32 damage)
 						}
 
 					}
+
+					GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 
 					gameMode->bWin = true;
 					gameMode->winWidgetInstance->SetVisibility(ESlateVisibility::Visible);

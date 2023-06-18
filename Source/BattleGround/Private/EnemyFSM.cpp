@@ -48,15 +48,12 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
-
 	if (gameMode->bEndGame == true) {
 		ChangeState(EEnemyState::Idle);
 		return;
 	}
 	me->CheckCreatureCollision();
 	if (target == nullptr)return;
-	UE_LOG(LogTemp, Warning, TEXT("MY name : %s / My Target : %s"), *me->GetActorLabel(), *target->GetActorLabel())
 	if (me->OutHits.Num()>0) {
 		if (target) {
 			dir = target->GetActorLocation() - me->GetActorLocation();
