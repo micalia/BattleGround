@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "InGameMode.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameOverDel);
 /**
  * 
  */
@@ -15,6 +16,8 @@ class BATTLEGROUND_API AInGameMode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
+	FGameOverDel gameoverDel;
+
 	AInGameMode();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -42,7 +45,12 @@ public:
 	float winCurrTime;
 	float winFadeInTime = 0.8;
 
+	UPROPERTY(BlueprintReadWrite)
 	bool bLose;
+
+	UFUNCTION(BlueprintCallable)
+	void PlayerDie();
+
 	UPROPERTY(EditAnywhere)
 	float loseCurrTime;
 	float loseFadeInTime = 0.8;

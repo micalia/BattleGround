@@ -10,6 +10,7 @@
 #include "../BattleGroundCharacter.h"
 #include <Camera/CameraComponent.h>
 #include "InGameTopUI.h"
+#include <UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 
 
 AInGameMode::AInGameMode() {
@@ -111,4 +112,37 @@ void AInGameMode::Tick(float DeltaTime)
 	if (InGameTopUiWidgetInstance) {
 		InGameTopUiWidgetInstance->UpdatePlayerCountTxt(InGamePlayerCount);
 	}
+}
+
+void AInGameMode::PlayerDie()
+{
+	bEndGame = true;
+
+	TArray<UUserWidget*> FoundWidgets;
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
+	for (int32 i = 0; i < FoundWidgets.Num(); i++)
+	{
+		if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+	}
+
+	APlayerController* controller = GetWorld()->GetFirstPlayerController();
+	Player->DisableInput(controller);
+	originLoseCameraTransform = Player->GetFollowCamera()->GetRelativeTransform();
+
+	//FTransform 자료형 빼기 식 성공
+	moveLoseCameraTransform = FTransform(
+		SetRotation,
+		originLoseCameraTransform.GetLocation() + SetLocation,
+		FVector(1)
+	);
+	UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *originLoseCameraTransform.ToString(), *moveLoseCameraTransform.ToString())
+		bLose = true;
+	UE_LOG(LogTemp, Warning, TEXT("PlayerDie!!"))
+	gameoverDel.Broadcast();
 }

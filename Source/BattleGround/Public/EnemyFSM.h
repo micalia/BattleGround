@@ -124,4 +124,7 @@ FRotator destRot;
 
 	UPROPERTY()
 	class AInGameMode* gameMode;
+
+	UFUNCTION()
+	void FuncGameOverDel();
 };

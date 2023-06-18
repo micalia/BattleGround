@@ -39,6 +39,7 @@ void UEnemyFSM::BeginPlay()
 	target = Cast<ABattleGroundCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABattleGroundCharacter::StaticClass()));
 	playerPointer = target;
 	gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+	gameMode->gameoverDel.AddDynamic(this, &UEnemyFSM::FuncGameOverDel);
 }
 
 
@@ -321,8 +322,13 @@ bool UEnemyFSM::IsTargetTrace()
 				return true;
 			}
 		}
-
+		
 	}
-
+	
 	return false;
+}
+
+void UEnemyFSM::FuncGameOverDel()
+{
+	ChangeState(EEnemyState::Idle);
 }

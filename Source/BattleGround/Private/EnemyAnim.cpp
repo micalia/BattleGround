@@ -16,6 +16,7 @@
 void UEnemyAnim::NativeBeginPlay()
 {
 	me = Cast<AEnemy>(TryGetPawnOwner());
+	gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 void UEnemyAnim::AnimNotify_Shot(){
@@ -49,36 +50,37 @@ void UEnemyAnim::AnimNotify_Shot(){
 				bloodEffect->SetWorldRotation(NewRotation);
 				player->currHp--;
 				if (player->currHp <= 0) {
-					AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+					
 					if (gameMode != NULL && gameMode->bLose == false) {
-						gameMode->bEndGame = true;
+						gameMode->PlayerDie();
+						//gameMode->bEndGame = true;
 
-						TArray<UUserWidget*> FoundWidgets;
-						UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
-						for (int32 i = 0; i<FoundWidgets.Num(); i++)
-						{
-							if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
-								FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
-							}
-							if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
-								FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
-							}
+						//TArray<UUserWidget*> FoundWidgets;
+						//UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
+						//for (int32 i = 0; i<FoundWidgets.Num(); i++)
+						//{
+						//	if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+						//		FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+						//	}
+						//	if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
+						//		FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+						//	}
 
-						}
+						//}
 
-						APlayerController* controller = GetWorld()->GetFirstPlayerController();
-						player->DisableInput(controller);
-						gameMode->originLoseCameraTransform = player->GetFollowCamera()->GetRelativeTransform();
+						//APlayerController* controller = GetWorld()->GetFirstPlayerController();
+						//player->DisableInput(controller);
+						//gameMode->originLoseCameraTransform = player->GetFollowCamera()->GetRelativeTransform();
 
-						//FTransform 자료형 빼기 식 성공
-						gameMode->moveLoseCameraTransform = FTransform(
-							gameMode->SetRotation,
-							gameMode->originLoseCameraTransform.GetLocation() + gameMode->SetLocation,
-							FVector(1)
-						);
-						UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *gameMode->originLoseCameraTransform.ToString(),*gameMode->moveLoseCameraTransform.ToString())
-						gameMode->bLose = true;
-						me->fsm->ChangeState(EEnemyState::Idle);
+						////FTransform 자료형 빼기 식 성공
+						//gameMode->moveLoseCameraTransform = FTransform(
+						//	gameMode->SetRotation,
+						//	gameMode->originLoseCameraTransform.GetLocation() + gameMode->SetLocation,
+						//	FVector(1)
+						//);
+						//UE_LOG(LogTemp, Warning, TEXT("originTransform : %s / moveTransform : %s"), *gameMode->originLoseCameraTransform.ToString(),*gameMode->moveLoseCameraTransform.ToString())
+						//gameMode->bLose = true;
+						//me->fsm->ChangeState(EEnemyState::Idle);
 					}
 				}
 

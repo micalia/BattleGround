@@ -25,6 +25,8 @@ public:
 
 	bool bShotTiming;
 
+	UPROPERTY()
+	class AInGameMode* gameMode;
 UFUNCTION()
 	void AnimNotify_Shot();
 };
