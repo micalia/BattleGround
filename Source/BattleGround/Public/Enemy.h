@@ -30,12 +30,12 @@ public:
 	class UParticleSystem* damageEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 FullHp = 5;
+	float FullHp = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 currHP = 0;
+		float currHP = 0;
 
 	UPROPERTY(EditAnywhere)
-		int32 power = 1;
+		float power = 1;
 
 	//¸ðµ¨¸µ
 	/*UPROPERTY()
@@ -60,7 +60,8 @@ public:
 	/*UPROPERTY(EditAnywhere)
 	class USphereComponent* checkEnemyColl;*/
 
-	int32 Damaged(int32 power);
+	UFUNCTION(BlueprintCallable)
+	float Damaged(float damage);
 
 	void UpdateWidgetRotation();
 
@@ -85,6 +86,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Sound)
 	class USoundCue* shotSoundCue;
+
+	UFUNCTION(BlueprintCallable)
+	void EnemyDieEvent();
 
 private:
 	FVector CameraLocation;

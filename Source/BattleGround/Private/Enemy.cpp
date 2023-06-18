@@ -157,37 +157,12 @@ void AEnemy::CheckCreatureCollision()
 	//}
 }
 
-int32 AEnemy::Damaged(int32 damage)
+float AEnemy::Damaged(float damage)
 {
 	if (fsm->bDie)return 0;
 	currHP -= damage;
 	if (currHP <= 0) {
-		AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
-		if (gameMode != NULL) {
-			gameMode->enemyCount--;
-			gameMode->InGamePlayerCount--;
-				if (gameMode->enemyCount <= 0) { 
-					TArray<UUserWidget*> FoundWidgets;
-					UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
-					for (int32 i = 0; i < FoundWidgets.Num(); i++)
-					{
-						if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
-							FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
-						}
-						if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
-							FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
-						}
-
-					}
-
-					GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
-
-					gameMode->bWin = true;
-					gameMode->winWidgetInstance->SetVisibility(ESlateVisibility::Visible);
-
-				}
-		}
-		fsm->ChangeState(EEnemyState::Die);
+		EnemyDieEvent();
 	}
 	return currHP;
 }
@@ -235,4 +210,34 @@ FRotator AEnemy::GetPlayerCameraRotation()
 	}
 
 	return FRotator::ZeroRotator;
+}
+
+void AEnemy::EnemyDieEvent()
+{
+	AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
+	if (gameMode != NULL) {
+		gameMode->enemyCount--;
+		gameMode->InGamePlayerCount--;
+		if (gameMode->enemyCount <= 0) {
+			TArray<UUserWidget*> FoundWidgets;
+			UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
+			for (int32 i = 0; i < FoundWidgets.Num(); i++)
+			{
+				if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
+					FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+				}
+				if (FoundWidgets[i]->GetName().Contains(TEXT("TopUI"))) {
+					FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+				}
+
+			}
+
+			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+
+			gameMode->bWin = true;
+			gameMode->winWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+
+		}
+	}
+	fsm->ChangeState(EEnemyState::Die);
 }

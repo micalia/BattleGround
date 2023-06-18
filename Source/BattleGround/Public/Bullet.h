@@ -27,7 +27,7 @@ public:
 	class UParticleSystem* damageEffect;
 
 	UPROPERTY(EditAnywhere)
-	int32 power = 1;
+	float power = 1;
 
 	UFUNCTION()
 	void OnOverlap(
