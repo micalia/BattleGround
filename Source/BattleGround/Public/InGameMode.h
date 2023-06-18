@@ -76,4 +76,5 @@ public:
 	bool bEndGame;
 
 	int32 InGamePlayerCount;
+
 };
