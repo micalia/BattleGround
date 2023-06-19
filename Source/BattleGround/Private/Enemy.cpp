@@ -214,6 +214,7 @@ FRotator AEnemy::GetPlayerCameraRotation()
 
 void AEnemy::EnemyDieEvent()
 {
+	if (fsm->bDie == true) return;
 	AInGameMode* gameMode = Cast<AInGameMode>(GetWorld()->GetAuthGameMode());
 	if (gameMode != NULL) {
 		gameMode->enemyCount--;
