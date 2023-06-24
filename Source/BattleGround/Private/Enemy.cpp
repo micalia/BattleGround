@@ -99,7 +99,7 @@ void AEnemy::BeginPlay()
 	currHP = FullHp;
 
 	enemyHpUI = Cast<UUI_EnemyHP>(enemyHPwidget->GetWidget());
-	GetWorldTimerManager().SetTimer(TimerHandle_UpdateWidgetRotation, this, &AEnemy::UpdateWidgetRotation, 0.1f, true);
+	//GetWorldTimerManager().SetTimer(TimerHandle_UpdateWidgetRotation, this, &AEnemy::UpdateWidgetRotation, 0.1f, true);
 }
 
 // Called every frame
