@@ -13,6 +13,8 @@ class ABattleGroundGameMode : public AGameModeBase
 
 public:
 	ABattleGroundGameMode();
+
+	
 };
 
 

@@ -3,6 +3,7 @@
 #include "BattleGroundGameMode.h"
 #include "BattleGroundCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include <Kismet/GameplayStatics.h>
 
 ABattleGroundGameMode::ABattleGroundGameMode()
 {
@@ -12,4 +13,8 @@ ABattleGroundGameMode::ABattleGroundGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+
 }
+
+

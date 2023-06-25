@@ -40,6 +40,20 @@ void UEnemyAnim::AnimNotify_Shot(){
 		paramShot);
 
 		if (bDamage) {
+			UE_LOG(LogTemp, Warning, TEXT("hitInfoShot.GetActor() : %s"), *hitInfoShot.GetActor()->GetName())
+				if (hitInfoShot.GetActor()->GetName().Contains(TEXT("Helmet"))) {
+					gameMode->PlayHitHelmetSound();
+
+					auto NewRotation = hitInfoShot.ImpactNormal.Rotation();
+					NewRotation.Roll += 90;
+					NewRotation.Yaw += 270;
+
+					auto sparkEffect = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), gameMode->HellmetHitEffect, hitInfoShot.ImpactPoint);
+					sparkEffect->SetWorldScale3D(FVector(0.2));
+					sparkEffect->SetWorldRotation(NewRotation);
+					sparkEffect->bAutoDestroy;
+					return;
+				}
 			ABattleGroundCharacter* player = Cast<ABattleGroundCharacter>(hitInfoShot.GetActor());
 			if (player) {
 				auto NewRotation = hitInfoShot.ImpactNormal.Rotation();

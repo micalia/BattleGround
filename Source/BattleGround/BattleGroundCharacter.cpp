@@ -14,6 +14,7 @@
 #include <Components/SceneComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <Engine/StaticMesh.h>
+#include <Kismet/GameplayStatics.h>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,7 +79,6 @@ ABattleGroundCharacter::ABattleGroundCharacter()
 	//firePos->SetupAttachment(gunMeshComp);
 	//firePos->SetRelativeLocation(FVector(0, 65, 15));
 	//firePos->SetRelativeRotation(FRotator(0, 90, 0));
-
 
 }
 
@@ -165,5 +165,3 @@ void ABattleGroundCharacter::InputFire()
 	/*FTransform firePosition = firePos->GetComponentTransform();
 	GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);*/
 }
-
-

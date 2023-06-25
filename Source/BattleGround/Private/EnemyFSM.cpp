@@ -48,6 +48,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if(ai == nullptr) return;
 	if (gameMode->bEndGame == true) {
 		ChangeState(EEnemyState::Idle);
 		return;

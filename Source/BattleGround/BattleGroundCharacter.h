@@ -70,6 +70,7 @@ public:
 
 public:
 	
+
 	// ÃÑ ½ºÄÌ·¹Å»¸Þ½Ã
 	//UPROPERTY(BlueprintReadWrite, Category="gunMesh")
 	//class USkeletalMeshComponent* gunMeshComp;
@@ -82,6 +83,5 @@ public:
 
 	//UPROPERTY(EditAnywhere)
 	//class USceneComponent* firePos;
-
 };
 

@@ -12,6 +12,7 @@
 #include "InGameTopUI.h"
 #include <UMG/Public/Blueprint/WidgetBlueprintLibrary.h>
 #include <NavigationSystem/Public/NavigationSystem.h>
+#include <Particles/ParticleSystem.h>
 
 
 AInGameMode::AInGameMode() {
@@ -33,6 +34,17 @@ AInGameMode::AInGameMode() {
 	if (tempInGameTopUIClassWidgetClass.Succeeded())
 	{
 		InGameTopUIClass = tempInGameTopUIClassWidgetClass.Class;
+	}
+
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempBulletHitHelmetSound(TEXT("/Script/Engine.SoundWave'/Game/Sounds/bulletHitHelmetSound.bulletHitHelmetSound'"));
+	if (tempBulletHitHelmetSound.Succeeded()) {
+		bulletHitHelmetSound = tempBulletHitHelmetSound.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> tempHitEffect(TEXT("/Script/Engine.ParticleSystem'/Game/Particle/Realistic_Starter_VFX_Pack_Vol2/Particles/Sparks/P_Sparks_C.P_Sparks_C'"));
+	if (tempHitEffect.Succeeded()) {
+		HellmetHitEffect = tempHitEffect.Object;
 	}
 }
 
@@ -124,6 +136,12 @@ void AInGameMode::PlayerDie()
 	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
 	for (int32 i = 0; i < FoundWidgets.Num(); i++)
 	{
+		if (FoundWidgets[i]->GetName().Contains(TEXT("HpWidget"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		if (FoundWidgets[i]->GetName().Contains(TEXT("Inventory"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
 		if (FoundWidgets[i]->GetName().Contains(TEXT("Player_HP"))) {
 			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
 		}
@@ -149,3 +167,10 @@ void AInGameMode::PlayerDie()
 		bLose = true;
 	gameoverDel.Broadcast();
 }
+
+
+void AInGameMode::PlayHitHelmetSound()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), bulletHitHelmetSound);
+}
+

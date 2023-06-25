@@ -77,4 +77,12 @@ public:
 
 	int32 InGamePlayerCount;
 
+	
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* bulletHitHelmetSound;
+
+	void PlayHitHelmetSound();
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* HellmetHitEffect;
 };
