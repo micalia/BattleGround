@@ -136,6 +136,9 @@ void AInGameMode::PlayerDie()
 	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass());
 	for (int32 i = 0; i < FoundWidgets.Num(); i++)
 	{
+		if (FoundWidgets[i]->GetName().Contains(TEXT("Magnetic"))) {
+			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
 		if (FoundWidgets[i]->GetName().Contains(TEXT("HpWidget"))) {
 			FoundWidgets[i]->SetVisibility(ESlateVisibility::Collapsed);
 		}
